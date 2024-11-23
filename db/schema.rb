@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_23_080017) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_23_085646) do
   create_table "categories", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -62,6 +62,28 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_23_080017) do
     t.index ["name"], name: "index_roles_on_name", unique: true
   end
 
+  create_table "sale_items", force: :cascade do |t|
+    t.integer "sale_id", null: false
+    t.integer "product_id", null: false
+    t.integer "quantity"
+    t.decimal "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_sale_items_on_product_id"
+    t.index ["sale_id"], name: "index_sale_items_on_sale_id"
+  end
+
+  create_table "sales", force: :cascade do |t|
+    t.datetime "date"
+    t.decimal "total"
+    t.integer "employee_id", null: false
+    t.integer "customer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_sales_on_customer_id"
+    t.index ["employee_id"], name: "index_sales_on_employee_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "username"
     t.string "email"
@@ -82,5 +104,9 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_23_080017) do
   add_foreign_key "products", "categories"
   add_foreign_key "role_permissions", "permissions"
   add_foreign_key "role_permissions", "roles"
+  add_foreign_key "sale_items", "products"
+  add_foreign_key "sale_items", "sales"
+  add_foreign_key "sales", "customers"
+  add_foreign_key "sales", "employees"
   add_foreign_key "users", "roles"
 end

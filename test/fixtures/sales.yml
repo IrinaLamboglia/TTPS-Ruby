@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  date: 2024-11-23 05:54:06
+  total: 9.99
+  employee: one
+  customer: one
+
+two:
+  date: 2024-11-23 05:54:06
+  total: 9.99
+  employee: two
+  customer: two
