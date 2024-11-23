@@ -3,7 +3,7 @@ class Product < ApplicationRecord
   # Un producto pertenece a una categoría y puede tener muchas imágenes asociadas.
   # Incluye validaciones para asegurar que los datos del producto sean correctos.
   # También soporta eliminación suave (soft delete).
-  
+
   belongs_to :category
   has_many :images, dependent: :destroy # Relación uno a muchos
 
@@ -16,7 +16,7 @@ class Product < ApplicationRecord
 
   validate :must_have_at_least_one_image
 
-  private   
+  private
   def must_have_at_least_one_image
     errors.add(:images, "debe tener al menos una imagen") if images.empty?
   end
@@ -28,4 +28,3 @@ class Product < ApplicationRecord
     update(stock: 0) # Elimina el stock al borrar
   end
 end
-
