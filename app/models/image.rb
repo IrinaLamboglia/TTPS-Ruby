@@ -4,7 +4,8 @@ class Image < ApplicationRecord
   # También soporta eliminación suave (soft delete).
 
   belongs_to :product
+  has_one_attached :file
 
-  # Validación de URL
-  validates :url, presence: true, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "debe ser una URL válida" }
+  # Validaciones
+  validates :file, presence: true, blob: { content_type: ['image/png', 'image/jpg', 'image/jpeg'], size_range: 1..5.megabytes }
 end

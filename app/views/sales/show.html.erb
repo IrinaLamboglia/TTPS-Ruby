@@ -1,0 +1,16 @@
+<div class="container my-5">
+  <h1 class="text-center mb-4">Detalles de la Venta</h1>
+  <div class="card shadow">
+    <div class="card-body">
+      <p><strong>Fecha:</strong> <%= @sale.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+      <p><strong>Total:</strong> $<%= @sale.total %></p>
+      <p><strong>Empleado:</strong> <%= @sale.user.name %></p>
+      <h5>Productos Vendidos:</h5>
+      <ul>
+        <% @sale.sale_items.each do |item| %>
+          <li><%= item.product.name %> - Cantidad: <%= item.quantity %> - Precio por unidad: $<%= item.price %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>

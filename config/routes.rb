@@ -1,34 +1,35 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Ruta raíz
+  root "storefront#index" # Página principal para el storefront público
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  # Sesiones (inicio y cierre de sesión)
+  get "/login", to: "sessions#new"
+  post "/login", to: "sessions#create"
+  delete "/logout", to: "sessions#destroy"
 
-  # Defines the root path route ("/")
-  root "home#index"
+  # Storefront (vista pública)
+  resources :storefront, only: [:index]
 
-   # Sesiones
-   get "/login", to: "sessions#new"
-   post "/login", to: "sessions#create"
-   delete "/logout", to: "sessions#destroy"
+  # Rutas principales para productos y ventas
+  resources :products
+  resources :sales
 
-   # Administración (requiere autenticación)
-   namespace :admin do
-     resources :products
-     resources :sales
-     resources :users
-   end
+  # Administración (requiere autenticación y roles)
+  namespace :admin do
+    resources :products
+    resources :sales
+    resources :users
+  end
 
-   # Rutas para otras entidades
-   resources :roles
-   resources :categories
+  # Rutas para roles y categorías (opcional)
+  resources :roles, only: [:index, :show]
+  resources :categories, only: [:index, :show]
 
-   # Productos y sus imágenes (subrecursos para productos)
-   resources :products do
-     resources :images, only: [ :create, :destroy ] # Solo acciones necesarias para imágenes
-   end
+  # Subrecursos para imágenes (vinculadas a productos)
+  resources :products do
+    resources :images, only: [:create, :destroy]
+  end
 
-   # Health check endpoint (útil para monitoreo)
-   get "up" => "rails/health#show", as: :rails_health_check
- end
+  # Endpoint de monitoreo de salud
+  get "up", to: "rails/health#show", as: :rails_health_check
+end

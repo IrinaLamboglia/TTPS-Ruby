@@ -12,7 +12,7 @@ class Product < ApplicationRecord
   validates :description, presence: true
   validates :price, numericality: { greater_than_or_equal_to: 0 }
   validates :stock, numericality: { greater_than_or_equal_to: 0 }
-  validates_associated :images # Valida que las imágenes asociadas sean válidas
+  validate :must_have_at_least_one_image
 
   validate :must_have_at_least_one_image
 

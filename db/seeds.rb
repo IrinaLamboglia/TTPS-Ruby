@@ -1,9 +1,16 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# db/seeds.rb
+Role.create(name: 'Administrador')
+Role.create(name: 'Gerente')
+Role.create(name: 'Empleado')
+
+User.create(username: 'admin', email: 'admin@example.com', phone: '123456789', password: 'password', role: Role.find_by(name: 'Administrador'), join_date: Date.today)
+User.create(username: 'gerente', email: 'gerente@example.com', phone: '123456789', password: 'password', role: Role.find_by(name: 'Gerente'), join_date: Date.today)
+User.create(username: 'empleado', email: 'empleado@example.com', phone: '123456789', password: 'password', role: Role.find_by(name: 'Empleado'), join_date: Date.today)
+
+Category.create(name: 'Ropa Deportiva')
+Category.create(name: 'Calzado')
+Category.create(name: 'Accesorios')
+
+Product.create(name: 'Camiseta Deportiva', description: 'Camiseta de alta calidad', price: 29.99, stock: 100, category: Category.find_by(name: 'Ropa Deportiva'))
+Product.create(name: 'Zapatillas Deportivas', description: 'Zapatillas cómodas y duraderas', price: 59.99, stock: 50, category: Category.find_by(name: 'Calzado'))
+Product.create(name: 'Gorra Deportiva', description: 'Gorra ajustable', price: 19.99, stock: 200, category: Category.find_by(name: 'Accesorios'))

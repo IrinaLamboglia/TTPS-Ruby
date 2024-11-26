@@ -1,0 +1,22 @@
+/* app/assets/stylesheets/custom.css */
+body {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .navbar {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .navbar a {
+    color: #fff;
+  }
+  
+  .container {
+    margin-top: 20px;
+  }
+  
+  .img-fluid {
+    max-width: 100%;
+    height: auto;
+  }

@@ -10,7 +10,7 @@ class User < ApplicationRecord
     validates :username, presence: true, uniqueness: true
     validates :email, presence: true, uniqueness: true
     validates :phone, presence: true
-    validates :role, presence: true
+    validates :role, presence: true,inclusion: { in: %w[admin gerente empleado] }
     validates :join_date, presence: true
 
     scope :active, -> { where(active: true) }

@@ -1,0 +1,34 @@
+<div class="container my-5">
+  <h1 class="text-center mb-4">Editar Venta</h1>
+  <div class="card shadow">
+    <div class="card-body">
+      <%= form_with model: @sale, local: true do |form| %>
+        <div class="mb-3">
+          <%= form.label :total, "Total de la Venta ($)", class: "form-label" %>
+          <%= form.number_field :total, step: 0.01, class: "form-control", readonly: true %>
+        </div>
+
+        <div id="products-container">
+          <%= form.fields_for :sale_items do |item_form| %>
+            <div class="mb-3">
+              <%= item_form.label :product_id, "Producto", class: "form-label" %>
+              <%= item_form.collection_select :product_id, Product.all, :id, :name, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+              <%= item_form.label :quantity, "Cantidad", class: "form-label" %>
+              <%= item_form.number_field :quantity, class: "form-control" %>
+            </div>
+            <div class="mb-3">
+              <%= item_form.label :price, "Precio por Unidad ($)", class: "form-label" %>
+              <%= item_form.number_field :price, step: 0.01, class: "form-control" %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="text-center">
+          <%= form.submit "Actualizar Venta", class: "btn btn-warning w-100" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
