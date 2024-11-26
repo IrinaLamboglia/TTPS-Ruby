@@ -42,9 +42,8 @@ class SalesController < ApplicationController
   end
 
   def destroy
-    restore_stock
-    @sale.destroy
-    redirect_to sales_path, notice: "Venta eliminada exitosamente."
+    @sale.cancel!
+    redirect_to sales_path, notice: "Venta cancelada exitosamente."
   end
 
   private

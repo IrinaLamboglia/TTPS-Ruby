@@ -4,9 +4,9 @@ class SessionsController < ApplicationController
 
   def create
     user = User.find_by(email: params[:email])
-    if user&.authenticate(params[:password])
-      session[:user_id] = user.id
-      redirect_to root_path, notice: "Bienvenido, #{user.name}."
+    if user&.valid_password?(params[:password])
+      sign_in(user)
+      redirect_to root_path, notice: "Bienvenido, #{user.username}."
     else
       flash.now[:alert] = "Email o contraseña incorrectos."
       render :new

@@ -1,10 +1,13 @@
 class CreatePermissions < ActiveRecord::Migration[8.0]
   def change
-    create_table :permissions do |t|
-      t.string :name
-
-      t.timestamps
+    unless table_exists?(:permissions)
+      create_table :permissions do |t|
+        t.string :name
+        t.timestamps
+      end
     end
-    add_index :permissions, :name, unique: true
+    unless index_exists?(:permissions, :name, unique: true)
+      add_index :permissions, :name, unique: true
+    end
   end
 end

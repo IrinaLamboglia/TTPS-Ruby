@@ -1,31 +1,25 @@
 class User < ApplicationRecord
-    # Esta clase representa un usuario de la aplicación.
-    # Incluye validaciones para asegurar que los datos del usuario sean correctos.
-    # También soporta eliminación suave (soft delete).
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable
 
-    belongs_to :role
+  # Relación con el rol (Role)
+  belongs_to :role
 
-    has_secure_password
+  # Validaciones
+  validates :username, presence: true, uniqueness: true
+  validates :email, presence: true, uniqueness: true
+  validates :phone, presence: true
+  validates :role, presence: true
+  validates :join_date, presence: true
 
-    validates :username, presence: true, uniqueness: true
-    validates :email, presence: true, uniqueness: true
-    validates :phone, presence: true
-    validates :role, presence: true,inclusion: { in: %w[admin gerente empleado] }
-    validates :join_date, presence: true
+  # Métodos de desactivación
+  def activate!
+    update(active: true)
+  end
 
-    scope :active, -> { where(active: true) }
-    scope :inactive, -> { where(active: false) }
-
-    # Métodos de desactivación
-
-    def activate!
-        update(active: true)
-    end
-
-    def deactivate
-      update(active: false, password: SecureRandom.hex)
-    end
-
-    # Scope para usuarios activos
-    scope :active, -> { where(active: true) }
+  def deactivate!
+    update(active: false, password: SecureRandom.hex)
+  end
 end

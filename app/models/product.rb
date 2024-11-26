@@ -5,7 +5,7 @@ class Product < ApplicationRecord
   # También soporta eliminación suave (soft delete).
 
   belongs_to :category
-  has_many :images, dependent: :destroy # Relación uno a muchos
+  has_many_attached :images, dependent: :destroy # Relación uno a muchos
 
   # Validaciones
   validates :name, presence: true
@@ -14,11 +14,10 @@ class Product < ApplicationRecord
   validates :stock, numericality: { greater_than_or_equal_to: 0 }
   validate :must_have_at_least_one_image
 
-  validate :must_have_at_least_one_image
-
   private
+
   def must_have_at_least_one_image
-    errors.add(:images, "debe tener al menos una imagen") if images.empty?
+    errors.add(:images, "debe tener al menos una imagen") unless images.attached?
   end
 
   # Soft delete

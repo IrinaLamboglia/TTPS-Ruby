@@ -1,5 +1,7 @@
 class AddRoleToUsers < ActiveRecord::Migration[8.0]
   def change
-    add_reference :users, :role, null: false, foreign_key: true
+    unless column_exists?(:users, :role_id)
+      add_reference :users, :role, null: false, foreign_key: true
+    end    
   end
 end

@@ -4,7 +4,7 @@ class Sale < ApplicationRecord
   # También soporta eliminación suave (soft delete).
 
   belongs_to :employee, class_name: 'User'
-  belongs_to :customer
+  belongs_to :customer, class_name: 'User'
   has_many :sale_items, dependent: :destroy
   has_many :products, through: :sale_items
 

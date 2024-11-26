@@ -64,3 +64,6 @@ end
 
 gem "bootstrap", "~> 5.3"
 gem 'sassc-rails'
+gem 'active_storage_validations'
+gem 'bcrypt', '~> 3.1.7'
+gem 'devise'

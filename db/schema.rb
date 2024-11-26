@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_25_233042) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_26_043619) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -47,10 +47,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_25_233042) do
 
   create_table "images", force: :cascade do |t|
     t.integer "product_id", null: false
-    t.string "url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["product_id"], name: "index_images_on_product_id"
   end
 
   create_table "permissions", force: :cascade do |t|
@@ -71,7 +69,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_25_233042) do
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["category_id"], name: "index_products_on_category_id"
   end
 
   create_table "role_permissions", force: :cascade do |t|
@@ -79,8 +76,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_25_233042) do
     t.integer "permission_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["permission_id"], name: "index_role_permissions_on_permission_id"
-    t.index ["role_id"], name: "index_role_permissions_on_role_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -97,8 +92,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_25_233042) do
     t.decimal "price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["product_id"], name: "index_sale_items_on_product_id"
-    t.index ["sale_id"], name: "index_sale_items_on_sale_id"
   end
 
   create_table "sales", force: :cascade do |t|
@@ -116,27 +109,22 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_25_233042) do
     t.string "username"
     t.string "email"
     t.string "phone"
-    t.string "password_digest"
     t.string "role"
     t.date "join_date"
     t.boolean "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "role_id", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.string "encrypted_password", default: "", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["role_id"], name: "index_users_on_role_id"
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "images", "products"
-  add_foreign_key "products", "categories"
-  add_foreign_key "role_permissions", "permissions"
-  add_foreign_key "role_permissions", "roles"
-  add_foreign_key "sale_items", "products"
-  add_foreign_key "sale_items", "sales"
-  add_foreign_key "sales", "customers"
-  add_foreign_key "sales", "employees"
-  add_foreign_key "users", "roles"
 end

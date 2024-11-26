@@ -4,6 +4,10 @@ class Admin::UsersController < ApplicationController
     def index
       @users = User.all
     end
+
+    def new
+        @user = User.new
+    end
   
     def create
       @user = User.new(user_params)
@@ -12,6 +16,10 @@ class Admin::UsersController < ApplicationController
       else
         render :new
       end
+    end
+
+    def edit
+        @user = User.find(params[:id])
     end
   
     def update
@@ -23,6 +31,7 @@ class Admin::UsersController < ApplicationController
     end
   
     def deactivate
+      @user = User.find(params[:id])
       @user.deactivate
       redirect_to admin_users_path, notice: 'Usuario desactivado exitosamente.'
     end

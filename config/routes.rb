@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   # Ruta raíz
   root "storefront#index" # Página principal para el storefront público
 

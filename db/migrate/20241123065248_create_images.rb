@@ -1,10 +1,10 @@
 class CreateImages < ActiveRecord::Migration[8.0]
   def change
-    create_table :images do |t|
-      t.references :product, null: false, foreign_key: true
-      t.string :url
-
-      t.timestamps
+    unless table_exists?(:images)
+      create_table :images do |t|
+        t.integer :product_id, null: false
+        t.timestamps
+      end
     end
   end
 end
