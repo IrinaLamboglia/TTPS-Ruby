@@ -24,40 +24,37 @@ end
   end
 end
 
-# Crear roles
-roles = ["admin", "gerente", "empleado"].map do |role_name|
-  Role.find_or_create_by!(name: role_name)
+# Crear permisos
+permissions = ["manage_users", "manage_products", "manage_sales"].map do |permission_name|
+  Permission.find_or_create_by!(name: permission_name)
+end
+
+# Crear roles y asignar permisos
+roles = {
+  "admin" => ["manage_users", "manage_products", "manage_sales"],
+  "gerente" => ["manage_products", "manage_sales"],
+  "empleado" => ["manage_products", "manage_sales"]
+}
+
+roles.each do |role_name, role_permissions|
+  role = Role.find_or_create_by!(name: role_name)
+  role_permissions.each do |permission_name|
+    permission = Permission.find_by(name: permission_name)
+    RolePermission.find_or_create_by!(role: role, permission: permission)
+  end
 end
 
 # Crear usuarios con Devise
-roles.each do |role|
-  user = User.find_or_create_by!(
-    username: "#{role.name}_user",
-    email: "#{role.name}@example.com",
+roles.keys.each do |role_name|
+  role = Role.find_by(name: role_name)
+  User.find_or_create_by!(
+    username: "#{role_name}_user",
+    email: "#{role_name}@example.com",
     phone: "1234567890",
-    role: role,  # Pasar el objeto `role`, no el nombre
+    role: role,
     join_date: Date.today
   ) do |user|
     user.password = "password"
     user.password_confirmation = "password"
-  end
-end
-
-# Crear ventas
-users = User.all
-products = Product.all
-5.times do
-  sale = Sale.create!(
-    date: Date.today,
-    total: rand(100..500),
-    employee: users.sample,
-    customer: users.sample 
-  )
-  3.times do
-    sale.sale_items.create!(
-      product: products.sample,
-      quantity: rand(1..5),
-      price: rand(10..100)
-    )
   end
 end

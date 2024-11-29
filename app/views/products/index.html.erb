@@ -1,26 +1,98 @@
-<h1 class="text-center my-4">Catálogo de Productos</h1>
+<div class="container py-5">
+  <!-- Título del catálogo -->
+  <div class="text-center mb-5">
+    <h1 class="fw-bold text-uppercase" style="color: #444;">Catálogo Exclusivo</h1>
+    <p class="text-muted">Descubre los productos que tenemos para ti</p>
+  </div>
 
-<div class="container">
-  <div class="row row-cols-1 row-cols-md-3 g-4">
+  <!-- Barra de búsqueda y opciones -->
+  <%= form_with url: products_path, method: :get, local: true, class: "row gy-3 align-items-center mb-5" do %>
+    <!-- Filtro por nombre -->
+    <div class="col-md-4">
+      <%= text_field_tag :query, params[:query], class: 'form-control rounded-pill border-dark', placeholder: 'Buscar productos...' %>
+    </div>
+
+    <!-- Filtro por categoría -->
+    <div class="col-md-3">
+      <%= select_tag :category, options_from_collection_for_select(@categories, :id, :name, params[:category]), include_blank: 'Categoría', class: 'form-select rounded-pill border-dark' %>
+    </div>
+
+    <!-- Ordenar por -->
+    <div class="col-md-3">
+      <%= select_tag :order_by, options_for_select([['Ordenar por', ''], ['Precio', 'price'], ['Nombre', 'name']], params[:order_by]), class: 'form-select rounded-pill border-dark' %>
+    </div>
+
+    <div class="col-md-2 d-flex">
+      <!-- Botón de buscar -->
+      <button type="submit" class="btn btn-outline-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+        <i class="fas fa-search"></i>
+      </button>
+      <!-- Botón de limpiar filtros -->
+      <%= link_to products_path, 
+                  class: 'btn btn-outline-dark rounded-circle d-flex align-items-center justify-content-center ms-3', 
+                  style: 'width: 48px; height: 48px;' do %>
+        <i class="fas fa-sync-alt"></i>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Muestra los productos -->
+  <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
     <% @products.each do |product| %>
       <div class="col">
-        <div class="card h-100 shadow-sm">
+        <div class="card h-100 border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
           <% if product.images.attached? %>
             <%= image_tag product.images.first.variant(resize_to_fill: [300, 300]), class: "card-img-top" %>
           <% else %>
             <%= image_tag "placeholder.png", class: "card-img-top" %>
           <% end %>
-          <div class="card-body">
-            <h5 class="card-title"><%= product.name %></h5>
-            <p class="card-text text-muted"><%= truncate(product.description, length: 100) %></p>
-            <p class="card-text"><strong>Precio:</strong> $<%= product.price %></p>
-            <p class="card-text"><strong>Stock:</strong> <%= product.stock %></p>
+          <div class="card-body text-center" style="background-color: #f8f8f8;">
+            <h5 class="card-title text-truncate" style="color: #222;"><%= product.name %></h5>
+            <p class="card-text text-muted small mb-2"><%= truncate(product.description, length: 50) %></p>
+            <p class="fw-bold" style="color: #d9534f;">$<%= product.price %></p>
+            <p class="text-muted small">Stock: <%= product.stock %> disponibles</p>
           </div>
-          <div class="card-footer text-center">
-            <%= link_to "Ver Detalles", product_path(product), class: "btn btn-dark btn-sm" %>
+          <div class="card-footer text-center" style="background-color: #fff;">
+            <%= link_to "Ver Detalles", product_path(product), class: "btn btn-dark btn-sm rounded-pill px-4" %>
           </div>
         </div>
       </div>
     <% end %>
   </div>
+
+  <!-- Paginación -->
+  <nav aria-label="Paginación" class="mt-5">
+    <ul class="pagination justify-content-center">
+      <!-- Flecha de página anterior -->
+      <% if @products.prev_page %>
+        <li class="page-item">
+          <%= link_to raw('<i class="fas fa-chevron-left"></i>'), url_for(page: @products.prev_page), class: "page-link rounded-circle bg-dark text-white border-0 shadow" %>
+        </li>
+      <% else %>
+        <li class="page-item disabled">
+          <span class="page-link rounded-circle bg-secondary text-white border-0 shadow"><i class="fas fa-chevron-left"></i></span>
+        </li>
+      <% end %>
+
+      <!-- Números de página -->
+      <% (1..@products.total_pages).each do |page_num| %>
+        <% css_class = "page-link rounded-circle border-0 shadow " %>
+        <% css_class += page_num == @products.current_page ? "bg-dark text-white" : "bg-light text-dark" %>
+        <li class="page-item <%= 'active' if page_num == @products.current_page %>">
+          <%= link_to page_num, url_for(page: page_num), class: css_class %>
+        </li>
+      <% end %>
+
+      <!-- Flecha de página siguiente -->
+      <% if @products.next_page %>
+        <li class="page-item">
+          <%= link_to raw('<i class="fas fa-chevron-right"></i>'), url_for(page: @products.next_page), class: "page-link rounded-circle bg-dark text-white border-0 shadow" %>
+        </li>
+      <% else %>
+        <li class="page-item disabled">
+          <span class="page-link rounded-circle bg-secondary text-white border-0 shadow"><i class="fas fa-chevron-right"></i></span>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
 </div>

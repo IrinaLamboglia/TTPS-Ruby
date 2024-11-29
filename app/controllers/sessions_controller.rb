@@ -1,21 +1,28 @@
-# app/controllers/sessions_controller.rb
-class SessionsController < ApplicationController
-  def new; end
+class SessionsController < Devise::SessionsController
+    # Puedes personalizar las acciones si lo necesitas
 
-  def create
-    user = User.find_by(email: params[:email])
-    if user&.valid_password?(params[:password])
-      sign_in(user)
-      redirect_to root_path, notice: "Bienvenido, #{user.username}."
-    else
-      flash.now[:alert] = "Email o contraseña incorrectos."
-      render :new
+    def login_as_admin
+      # Asegura que el mapeo de Devise esté configurado explícitamente
+      request.env["devise.mapping"] = Devise.mappings[:user]
+  
+      admin = User.find_by(email: 'admin@example.com') # Ajusta este correo según tu usuario administrador
+      if admin
+        sign_in admin
+        redirect_to root_path, notice: 'Sesión iniciada como administrador.'
+      else
+        redirect_to new_user_session_path, alert: 'No se encontró el administrador.'
+      end
+    end
+    
+    def new
+      super
+    end
+  
+    def create
+      super
+    end
+  
+    def destroy
+      super
     end
   end
-
-  def destroy
-    session[:user_id] = nil
-    redirect_to root_path, notice: "Sesión cerrada."
-  end
-
-end

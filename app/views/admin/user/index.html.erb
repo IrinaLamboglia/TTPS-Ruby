@@ -1,0 +1,92 @@
+<%= content_for :title, "Usuarios" %>
+
+<section class="container mt-5">
+  <!-- Título -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-secondary fw-bold">Usuarios</h1>
+    <!-- Botones de acciones -->
+    <%= link_to 'Registrar Usuario', new_user_path, class: 'btn btn-outline-primary' do %>
+      <i class="fas fa-user-plus"></i> Registrar Usuario
+    <% end %>
+    <%= link_to 'Usuarios Pendientes', pending_users_path, class: 'btn btn-outline-primary' do %>
+      <i class="fas fa-user-clock"></i> Usuarios Pendientes
+    <% end %>
+  </div>
+
+  <!-- Barra de búsqueda y opciones -->
+  <%= form_with url: users_path, method: :get, local: true, class: 'mb-4' do |f| %>
+    <div class="row g-3 align-items-center">
+      <div class="col-md-4">
+        <%= f.text_field :email, params[:email], class: 'form-control', placeholder: 'Buscar por email' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.select :activo, [['Todos', ''], ['Activo', 'si'], ['Bloqueado', 'no']], params[:activo], { include_blank: false }, class: 'form-select' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.select :rol, [['Todos los roles', '']] + @roles.map { |rol| [rol.name, rol.name] }, params[:rol], { include_blank: false }, class: 'form-select' %>
+      </div>
+      <div class="col-md-2">
+        <div class="d-flex justify-content-between">
+          <%= f.submit 'Buscar', class: 'btn btn-success w-100' %>
+          <%= link_to users_path, class: 'btn btn-outline-secondary ms-2' do %>
+            <i class="fas fa-sync-alt"></i>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Tabla de usuarios -->
+  <div class="table-responsive text-center">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-primary text-dark">
+        <tr>
+          <th>
+            <%= sort_link(@users, :email, "Email") %>
+          </th>
+          <th>Alias</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>
+            <%= sort_link(@users, :created_at, "Fecha de Creación") %>
+          </th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |usuario| %>
+          <tr>
+            <td><%= usuario.email %></td>
+            <td><%= usuario.alias %></td>
+            <td><%= usuario.role.name %></td>
+            <td>
+              <span class="badge <%= usuario.active ? 'bg-success' : 'bg-danger' %>">
+                <%= usuario.active ? 'Activo' : 'Bloqueado' %>
+              </span>
+            </td>
+            <td><%= usuario.created_at.strftime('%Y-%m-%d') %></td>
+            <td>
+              <%= link_to 'Ver', user_path(usuario), class: 'btn btn-outline-info btn-sm' do %>
+                <i class="fas fa-eye"></i>
+              <% end %>
+              <%= link_to 'Editar', edit_user_path(usuario), class: 'btn btn-outline-warning btn-sm' do %>
+                <i class="fas fa-edit"></i>
+              <% end %>
+              <%= button_to usuario.active ? 'Bloquear' : 'Activar', toggle_active_user_path(usuario), method: :post, class: "btn btn-sm #{usuario.active ? 'btn-outline-danger' : 'btn-success'}" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <%= paginate @users %>
+
+  <!-- Botón de volver -->
+  <div class="mt-4">
+    <%= link_to 'Volver a inicio', root_path, class: 'btn btn-outline-secondary' do %>
+      <i class="fas fa-arrow-left"></i> Volver a inicio
+    <% end %>
+  </div>
+</section>

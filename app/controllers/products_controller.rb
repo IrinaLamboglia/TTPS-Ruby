@@ -1,46 +1,33 @@
-# app/controllers/products_controller.rb
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[edit update destroy]
-
+  # Mostrar el catálogo público
   def index
-    @products = Product.all
-  end
+    @categories = Category.all  # Trae todas las categorías
 
-  def new
-    @product = Product.new
-  end
+    @products = Product.page(params[:page]).per(9)
 
-  def create
-    @product = Product.new(product_params)
-    if @product.save
-      redirect_to products_path, notice: "Producto creado exitosamente."
-    else
-      render :new
+
+    # Filtro por nombre de producto
+    if params[:query].present?
+      @products = @products.where('name LIKE ?', "%#{params[:query]}%")
+    end
+
+    # Filtro por categoría
+    if params[:category].present?
+      @products = @products.where(category_id: params[:category])
+    end
+
+    # Ordenar productos
+    if params[:order_by].present?
+      order_column = params[:order_by] == 'price' ? :price : :name
+      @products = @products.order(order_column)
     end
   end
 
-  def edit; end
-
-  def update
-    if @product.update(product_params)
-      redirect_to products_path, notice: "Producto actualizado."
-    else
-      render :edit
-    end
-  end
-
-  def destroy
-    @product.update(stock: 0)
-    redirect_to products_path, notice: "Producto eliminado (borrado lógico)."
-  end
-
-  private
-
-  def set_product
+  # Mostrar detalles de un producto específico
+  def show
     @product = Product.find(params[:id])
-  end
-
-  def product_params
-    params.require(:product).permit(:name, :description, :price, :stock, :category, images: [])
+    if @product.deleted_at.present? || @product.stock <= 0
+      redirect_to products_path, alert: 'El producto no está disponible.'
+    end
   end
 end

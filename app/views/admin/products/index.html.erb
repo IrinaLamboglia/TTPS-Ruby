@@ -1,16 +1,85 @@
-<div class="container">
-  <h1>Todos los productos</h1>
-  <div class="row">
-    <% @products.each do |product| %>
-      <div class="col-md-3">
-        <%= link_to admin_product_path(product) do %>
-          <% if product.images.attached? %>
-            <%= image_tag product.images.first.variant(resize_to_limit: [300, 300]), class: "img-fluid" %>
-          <% end %>
-          <h4><%= product.name %></h4>
-          <p>$<%= product.price %></p>
-        <% end %>
-      </div>
+<%= content_for :title, "Productos" %>
+
+<section class="container mt-5">
+  <!-- Título -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-secondary fw-bold">Productos</h1>
+    <!-- Botón para agregar producto -->
+    <%= link_to 'Registrar Producto', new_admin_product_path, class: 'btn btn-outline-primary' do %>
+      <i class="fas fa-box-plus"></i> Registrar Producto
     <% end %>
   </div>
-</div>
+
+  <!-- Barra de búsqueda y opciones -->
+  <%= form_with url: admin_products_path, method: :get, local: true, class: 'mb-4' do |f| %>
+    <div class="row g-3 align-items-center">
+      <div class="col-md-4">
+        <%= f.text_field :name, params[:name], class: 'form-control', placeholder: 'Buscar por nombre' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.select :category, [['Todas las categorías', '']] + @categories.map { |category| [category.name, category.id] }, params[:category], { include_blank: false }, class: 'form-select' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.select :status, [['Todos', ''], ['Disponibles', 'available'], ['Agotados', 'out_of_stock']], params[:status], { include_blank: false }, class: 'form-select' %>
+      </div>
+      <div class="col-md-2">
+        <div class="d-flex justify-content-between">
+          <%= f.submit 'Buscar', class: 'btn btn-success w-100' %>
+          <%= link_to admin_products_path, class: 'btn btn-outline-secondary ms-2' do %>
+            <i class="fas fa-sync-alt"></i>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Tabla de productos -->
+  <div class="table-responsive text-center">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-primary text-dark">
+        <tr>
+          <th><%= sort_link(@products, :name, "Nombre") %></th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th><%= sort_link(@products, :created_at, "Fecha de Creación") %></th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @products.each do |product| %>
+          <tr>
+            <td><%= product.name %></td>
+            <td><%= product.category.name %></td>
+            <td><%= number_to_currency(product.price) %></td>
+            <td>
+              <span class="badge <%= product.stock > 0 ? 'bg-success' : 'bg-danger' %>">
+                <%= product.stock > 0 ? 'Disponible' : 'Agotado' %>
+              </span>
+            </td>
+            <td><%= product.created_at.strftime('%Y-%m-%d') %></td>
+            <td>
+              <%= link_to 'Ver', admin_product_path(product), class: 'btn btn-outline-info btn-sm' do %>
+                <i class="fas fa-eye"></i>
+              <% end %>
+              <%= link_to 'Editar', edit_admin_product_path(product), class: 'btn btn-outline-warning btn-sm' do %>
+                <i class="fas fa-edit"></i>
+              <% end %>
+              <%= button_to 'Eliminar', admin_product_path(product), method: :delete, class: 'btn btn-outline-danger btn-sm', data: { confirm: '¿Estás seguro de eliminar este producto?' } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <%= paginate @products %>
+
+  <!-- Botón de volver -->
+  <div class="mt-4">
+    <%= link_to 'Volver a inicio', root_path, class: 'btn btn-outline-secondary' do %>
+      <i class="fas fa-arrow-left"></i> Volver a inicio
+    <% end %>
+  </div>
+</section>

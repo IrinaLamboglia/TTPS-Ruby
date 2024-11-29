@@ -1,12 +1,9 @@
 Rails.application.routes.draw do
+
   devise_for :users
   # Ruta raíz
   root "storefront#index" # Página principal para el storefront público
 
-  # Sesiones (inicio y cierre de sesión)
-  get "/login", to: "sessions#new"
-  post "/login", to: "sessions#create"
-  delete "/logout", to: "sessions#destroy"
 
   # Storefront (vista pública)
   resources :storefront, only: [:index]
@@ -19,7 +16,17 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :products
     resources :sales
-    resources :users
+    resources :users, except: [:destroy] do
+      member do
+        post :toggle_active
+        patch :update
+      end
+      collection do
+        get :index
+        get :create
+        post :authenticate
+      end
+    end
   end
 
   # Rutas para roles y categorías (opcional)
@@ -33,4 +40,8 @@ Rails.application.routes.draw do
 
   # Endpoint de monitoreo de salud
   get "up", to: "rails/health#show", as: :rails_health_check
+
+  devise_scope :user do
+    get '/login_as_admin', to: 'sessions#login_as_admin' if Rails.env.development?
+  end
 end

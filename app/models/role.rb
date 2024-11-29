@@ -4,4 +4,8 @@ class Role < ApplicationRecord
     has_many :permissions, through: :role_permissions
 
     validates :name, presence: true, uniqueness: true
+
+    def has_permission?(permission_name)
+        permissions.exists?(name: permission_name)
+    end
 end

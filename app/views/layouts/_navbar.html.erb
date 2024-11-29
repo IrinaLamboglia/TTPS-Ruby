@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container">
+    <div class="d-flex align-items-center">
+      <%= link_to root_path do %>
+        <%= image_tag "logo.png", alt: "Logo", class: "navbar-brand logo me-2" %>
+      <% end %>
+      <a href="<%= root_path %>" class="navbar-brand text-white fs-4">Avivas Inventory</a>
+    </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <%= link_to "Inicio", root_path, class: "nav-link" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Productos", products_path, class: "nav-link" %>
+        </li>
+        <% if user_signed_in? %>
+          <% if current_user.role.has_permission?('manage_users') %>
+            <li class="nav-item">
+              <%= link_to "Usuarios", users_path, class: "nav-link" %>
+            </li>
+          <% end %>
+          <% if current_user.role.has_permission?('manage_products') %>
+            <li class="nav-item">
+              <%= link_to "Publicación", new_product_path, class: "nav-link" %>
+            </li>
+          <% end %>
+          <li class="nav-item">
+            <li><%= link_to "Cerrar Sesion", destroy_user_session_path %></li>
+          </li>
+        <% else %>
+          <li class="nav-item">
+            <%= link_to "Iniciar sesión", new_user_session_path, class: "nav-link" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>

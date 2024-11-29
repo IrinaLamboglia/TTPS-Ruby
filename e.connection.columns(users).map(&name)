@@ -1,0 +1,15 @@
+=> 
+[[31m[1m"[0m[31mid[0m[31m[1m"[0m,
+ [31m[1m"[0m[31musername[0m[31m[1m"[0m,
+ [31m[1m"[0m[31memail[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mphone[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mrole[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mjoin_date[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mactive[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mcreated_at[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mupdated_at[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mrole_id[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mreset_password_token[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mreset_password_sent_at[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mremember_created_at[0m[31m[1m"[0m,
+ [31m[1m"[0m[31mencrypted_password[0m[31m[1m"[0m]
