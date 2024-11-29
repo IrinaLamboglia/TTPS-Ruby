@@ -1,12 +1,16 @@
 Rails.application.routes.draw do
+
   devise_for :users
   # Ruta raíz
   root "storefront#index" # Página principal para el storefront público
 
-  # Sesiones (inicio y cierre de sesión)
-  get "/login", to: "sessions#new"
-  post "/login", to: "sessions#create"
-  delete "/logout", to: "sessions#destroy"
+  # Administración (requiere autenticación y roles)
+    namespace :admin do
+      resources :products
+      resources :sales
+      resources :users
+    end
+
 
   # Storefront (vista pública)
   resources :storefront, only: [:index]
@@ -15,13 +19,7 @@ Rails.application.routes.draw do
   resources :products
   resources :sales
 
-  # Administración (requiere autenticación y roles)
-  namespace :admin do
-    resources :products
-    resources :sales
-    resources :users
-  end
-
+  
   # Rutas para roles y categorías (opcional)
   resources :roles, only: [:index, :show]
   resources :categories, only: [:index, :show]

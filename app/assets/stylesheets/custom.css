@@ -1,22 +1,123 @@
-/* app/assets/stylesheets/custom.css */
-body {
-    font-family: 'Arial', sans-serif;
-  }
-  
-  .navbar {
-    background-color: #000;
-    color: #fff;
-  }
-  
-  .navbar a {
-    color: #fff;
-  }
-  
-  .container {
-    margin-top: 20px;
-  }
-  
-  .img-fluid {
-    max-width: 100%;
-    height: auto;
-  }
+/* Carrusel Styles */
+.carousel {
+  position: relative;
+  width: 80%;
+  max-width: 600px;
+  overflow: hidden;
+  border-radius: 10px;
+  margin: 20px auto; /* Center carousel */
+}
+
+.carousel-images {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-images img {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  z-index: 10;
+}
+
+.carousel-button.left {
+  left: 10px;
+}
+
+.carousel-button.right {
+  right: 10px;
+}
+
+/* Carrusel Styles */
+.carousel {
+  position: relative;
+  width: 80%;
+  max-width: 600px;
+  overflow: hidden;
+  border-radius: 10px;
+  margin: 20px auto; /* Center carousel */
+}
+
+.carousel-images {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-images img {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  z-index: 10;
+}
+
+.carousel-button.left {
+  left: 10px;
+}
+
+.carousel-button.right {
+  right: 10px;
+}
+
+/* Botones */
+.btn-outline-secondary {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+/* Productos */
+.card {
+  border-radius: 10px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.card-img-top {
+  border-bottom: 1px solid #ddd;
+}
+.navbar {
+  background-color: #ffffff; /* Fondo blanco */
+  border-bottom: 1px solid #e0e0e0; /* Línea sutil para separar */
+}
+
+.navbar-brand {
+  font-family: 'Poppins', sans-serif;
+  color: #333333; /* Texto gris oscuro */
+}
+
+.navbar-brand i {
+  color: #ff6600; /* Un color llamativo para el ícono */
+  font-size: 1.8rem;
+  margin-right: 10px;
+}

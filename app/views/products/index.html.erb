@@ -1,6 +1,5 @@
-<h1 class="text-center my-4">Catálogo de Productos</h1>
-
-<div class="container">
+<div class="container my-5">
+  <h1 class="text-center mb-4">Catálogo de Productos</h1>
   <div class="row row-cols-1 row-cols-md-3 g-4">
     <% @products.each do |product| %>
       <div class="col">
@@ -14,7 +13,6 @@
             <h5 class="card-title"><%= product.name %></h5>
             <p class="card-text text-muted"><%= truncate(product.description, length: 100) %></p>
             <p class="card-text"><strong>Precio:</strong> $<%= product.price %></p>
-            <p class="card-text"><strong>Stock:</strong> <%= product.stock %></p>
           </div>
           <div class="card-footer text-center">
             <%= link_to "Ver Detalles", product_path(product), class: "btn btn-dark btn-sm" %>

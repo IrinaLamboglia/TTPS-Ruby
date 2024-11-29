@@ -1,6 +1,15 @@
 class Admin::ProductsController < Admin::BaseController
+  before_action :set_product, only: %i[show edit update destroy]
+
   def index
     @products = Product.all
+  end
+
+  def show
+    @product = Product.find_by(id: params[:id])
+    unless @product
+      redirect_to products_path, alert: "El producto no existe."
+    end 
   end
 
   def new
@@ -39,5 +48,9 @@ class Admin::ProductsController < Admin::BaseController
 
   def product_params
     params.require(:product).permit(:name, :description, :price, :stock, :category_id, images: [])
+  end
+
+  def set_product
+    @product = Product.find(params[:id])
   end
 end

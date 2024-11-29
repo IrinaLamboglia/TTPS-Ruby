@@ -17,4 +17,6 @@ class ApplicationController < ActionController::Base
   def require_manager_or_admin
     redirect_to root_path, alert: "Acceso denegado." unless %w[admin gerente].include?(current_user&.role)
   end
+
+  before_action :authenticate_user!
 end
