@@ -1,18 +1,34 @@
-<div class="container my-4">
+<div class="container py-5">
+  <!-- Título del producto -->
+  <div class="row mb-5">
+    <div class="col-12 text-center">
+      <h1 class="fw-bold text-uppercase" style="color: #444;"><%= @product.name %></h1>
+      <p class="text-muted fs-5"><%= @product.description %></p>
+    </div>
+  </div>
+
+  <!-- Detalle del producto -->
   <div class="row">
-    <div class="col-md-6">
+    <!-- Imagen del producto -->
+    <div class="col-md-6 text-center">
       <% if @product.images.attached? %>
-        <%= image_tag @product.images.first.variant(resize_to_fill: [500, 500]), class: "img-fluid rounded" %>
+        <%= image_tag @product.images.first.variant(resize_to_fill: [500, 500]), class: "img-fluid rounded shadow-lg" %>
       <% else %>
-        <%= image_tag "placeholder.png", class: "img-fluid rounded" %>
+        <%= image_tag "placeholder.png", class: "img-fluid rounded shadow-lg" %>
       <% end %>
     </div>
-    <div class="col-md-6">
-      <h1><%= @product.name %></h1>
-      <p class="text-muted"><%= @product.description %></p>
-      <p><strong>Precio:</strong> $<%= @product.price %></p>
-      <p><strong>Stock Disponible:</strong> <%= @product.stock %></p>
-      <%= link_to "Volver al Catálogo", products_path, class: "btn btn-outline-dark mt-3" %>
+
+    <!-- Información del producto -->
+    <div class="col-md-6 d-flex flex-column justify-content-center">
+      <div class="mb-4">
+        <p class="fw-bold fs-3" style="color: #d9534f;">$<%= @product.price %></p>
+        <p class="text-muted"><strong>Stock Disponible:</strong> <%= @product.stock %></p>
+        <p><strong>Color:</strong> <%= @product.color || "No especificado" %></p>
+        <p><strong>Tamaño:</strong> <%= @product.size || "No especificado" %></p>
+      </div>
+      <div>
+        <%= link_to "Volver al Catálogo", products_path, class: "btn btn-outline-dark btn-lg rounded-pill w-100" %>
+      </div>
     </div>
   </div>
 </div>

@@ -1,0 +1,32 @@
+<%= content_for :title, @product.name %> 
+
+<section class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-secondary fw-bold"><%= @product.name %></h1>
+    <%= link_to 'Volver a Productos', admin_products_path, class: 'btn btn-outline-secondary' %>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <p><strong>Precio:</strong> <%= number_to_currency(@product.price) %></p>
+      <p><strong>Stock:</strong> <%= @product.stock %></p>
+      <p><strong>Categoría:</strong> <%= @product.category.name %></p>
+      <p><strong>Color:</strong> <%= @product.color %></p>
+      <p><strong>Tamaño:</strong> <%= @product.size %></p>
+      <p><strong>Descripción:</strong> <%= @product.description %></p>
+    </div>
+    <div class="col-md-6">
+      <% if @product.images.attached? %>
+        <div class="row row-cols-3">
+          <% @product.images.each do |image| %>
+            <div class="col mb-3">
+              <%= image_tag image.variant(resize_to_fill: [150, 150]), class: 'img-thumbnail' %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p>No hay fotos disponibles para este producto.</p>
+      <% end %>
+    </div>
+  </div>
+</section>

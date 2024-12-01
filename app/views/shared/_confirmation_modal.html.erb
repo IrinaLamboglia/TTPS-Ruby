@@ -1,0 +1,22 @@
+<!-- Modal de confirmación -->
+<div id="confirmationModal" class="modal fade" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Encabezado del modal -->
+      <div class="modal-header bg-primary text-white">
+        <h5 id="confirmationModalLabel" class="modal-title">Confirmar acción</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <!-- Cuerpo del modal -->
+      <div class="modal-body text-center">
+        <p id="modalMessage">¿Estás seguro de que deseas realizar esta acción?</p>
+        <i class="fas fa-exclamation-circle text-warning fs-3"></i>
+      </div>
+      <!-- Pie del modal -->
+      <div class="modal-footer d-flex justify-content-between">
+        <button id="confirmButton" class="btn btn-success w-45">Confirmar</button>
+        <button type="button" class="btn btn-danger w-45" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

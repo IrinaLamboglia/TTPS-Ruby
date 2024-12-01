@@ -7,12 +7,16 @@ class User < ApplicationRecord
   # Relación con el rol (Role)
   belongs_to :role
 
+  before_create :set_join_date
+
   # Validaciones
   validates :username, presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true
   validates :phone, presence: true
   validates :role, presence: true
   validates :join_date, presence: true
+  validates :password, presence: true, on: :create
+  
 
   scope :filter_by_email, ->(email) { where("email ILIKE ?", "%#{email}%") if email.present? }
   scope :filter_by_active, ->(activo) { where(active: activo == "si") if activo.present? }
@@ -25,5 +29,10 @@ class User < ApplicationRecord
 
   def deactivate!
     update(active: false, password: SecureRandom.hex)
+  end
+  private 
+
+  def set_join_date
+    self.join_date ||= Date.today
   end
 end

@@ -1,2 +1,112 @@
-<h1>Admin::Products#edit</h1>
-<p>Find me in app/views/admin/products/edit.html.erb</p>
+<%= content_for :title, "Editar Producto" %>
+
+<section class="container mt-5">
+  <!-- Título -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-secondary fw-bold">Editar Producto</h1>
+    <%= link_to 'Volver a Productos', admin_products_path, class: 'btn btn-outline-secondary' %>
+  </div>
+
+  <% if flash.now[:error].present? %>
+    <div class="alert alert-danger">
+        <%= flash.now[:error] %>
+    </div>
+    <% end %>
+
+  <%= form_with(model: @product, url: admin_product_path(@product), method: :patch, local: true, html: { multipart: true }) do |form| %>
+    <div class="mb-3">
+      <%= form.label :name, "Nombre del Producto", class: "form-label" %>
+      <%= form.text_field :name, class: "form-control" %>
+    </div>
+  
+    <div class="mb-3">
+      <%= form.label :description, "Descripción", class: "form-label" %>
+      <%= form.text_area :description, class: "form-control" %>
+    </div>
+  
+    <div class="mb-3">
+      <%= form.label :price, "Precio", class: "form-label" %>
+      <%= form.number_field :price, class: "form-control", step: 0.01 %>
+    </div>
+  
+    <div class="mb-3">
+      <%= form.label :stock, "Stock", class: "form-label" %>
+      <%= form.number_field :stock, class: "form-control" %>
+    </div>
+  
+    <div class="mb-3">
+      <%= form.label :category_id, "Categoría", class: "form-label" %>
+      <%= form.collection_select :category_id, Category.all, :id, :name, { prompt: "Seleccione una categoría" }, class: "form-control" %>
+    </div>
+  
+    <div class="mb-3">
+      <%= form.label :color, "Color", class: "form-label" %>
+      <%= form.text_field :color, class: "form-control" %>
+    </div>
+  
+    <div class="mb-3">
+      <%= form.label :size, "Tamaño", class: "form-label" %>
+      <%= form.text_field :size, class: "form-control" %>
+    </div>
+  
+    <div class="mb-3">
+      <%= form.label :images, "Seleccionar imágenes", class: "form-label" %>
+      <%= form.file_field :images, multiple: false, class: "form-control", id: "image-input" %>
+    </div>
+  
+    <!-- Contenedor para vista previa -->
+    <div id="image-preview-container" class="d-flex flex-wrap mt-3">
+      <!-- Imágenes existentes -->
+      <% @product.images.each do |image| %>
+        <div class="image-preview me-3 mb-3 position-relative" data-image-id="<%= image.id %>">
+          <%= image_tag image, class: "img-thumbnail", size: "150x150" %>
+          <%= button_to "Eliminar", delete_image_admin_product_path(image), method: :delete, class: "btn btn-danger btn-sm position-absolute top-0 end-0", data: { turbo_confirm: "¿Estás seguro?" } %>
+        </div>
+      <% end %>
+    </div>
+  
+    <%= form.submit "Guardar cambios", class: "btn btn-primary mt-3" %>
+  <% end %>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const imageInput = document.getElementById("image-input");
+      const previewContainer = document.getElementById("image-preview-container");
+  
+      imageInput.addEventListener("change", (event) => {
+        const files = event.target.files;
+  
+        Array.from(files).forEach((file) => {
+          const reader = new FileReader();
+  
+          reader.onload = (e) => {
+            const previewDiv = document.createElement("div");
+            previewDiv.className = "image-preview me-3 mb-3 position-relative";
+  
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.className = "img-thumbnail";
+            img.style.width = "150px";
+            img.style.height = "150px";
+  
+            const removeButton = document.createElement("button");
+            removeButton.className = "btn btn-danger btn-sm position-absolute top-0 end-0";
+            removeButton.textContent = "Eliminar";
+  
+            removeButton.addEventListener("click", () => {
+              previewDiv.remove();
+            });
+  
+            previewDiv.appendChild(img);
+            previewDiv.appendChild(removeButton);
+            previewContainer.appendChild(previewDiv);
+          };
+  
+          reader.readAsDataURL(file);
+        });
+      });
+    });
+  </script>
+  
+  
+</section>

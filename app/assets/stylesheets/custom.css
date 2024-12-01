@@ -121,3 +121,21 @@
   font-size: 1.8rem;
   margin-right: 10px;
 }
+
+
+.card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.card-footer {
+  padding: 0.5rem;
+}

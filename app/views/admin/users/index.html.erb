@@ -1,0 +1,97 @@
+<%= content_for :title, "Usuarios" %>
+
+<section class="container mt-5">
+  <!-- Título y botón de acción principal -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-secondary fw-bold">Usuarios</h1>
+    <%= link_to new_admin_user_path, class: 'btn btn-outline-primary' do %>
+      <i class="fas fa-user-plus"></i> Registrar Usuario
+    <% end %>
+  </div>
+
+  <!-- Barra de búsqueda -->
+  <%= form_with url: admin_users_path, method: :get, local: true, class: 'mb-4' do |f| %>
+    <div class="row g-3 align-items-center">
+      <div class="col-md-4">
+        <%= f.text_field :email, value: params[:email], class: 'form-control', placeholder: 'Buscar por email' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.select :activo, [['Todos', ''], ['Activo', 'si'], ['Bloqueado', 'no']], { selected: params[:activo] }, class: 'form-select' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.select :rol, [['Todos los roles', '']] + @roles.map { |rol| [rol.name, rol.name] }, { selected: params[:rol] }, class: 'form-select' %>
+      </div>
+      <div class="col-md-2">
+        <div class="d-flex">
+          <%= f.submit 'Buscar', class: 'btn btn-success w-100' %>
+          <%= link_to admin_users_path, class: 'btn btn-outline-secondary ms-2' do %>
+            <i class="fas fa-sync-alt"></i>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Tabla de usuarios -->
+  <div class="table-responsive text-center">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-primary text-dark">
+        <tr>
+          <th>
+            <%= link_to 'Email', admin_users_path(sort: 'email', order: params[:order] == 'desc' ? 'asc' : 'desc', email: params[:email], activo: params[:activo], rol: params[:rol]) %>
+            <% if params[:sort] == 'email' %>
+              <i class="fas fa-sort-<%= params[:order] == 'asc' ? 'up' : 'down' %>"></i>
+            <% end %>
+          </th>
+          <th>Alias</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>
+            <%= link_to 'Fecha de Creación', admin_users_path(sort: 'created_at', order: params[:order] == 'desc' ? 'asc' : 'desc', email: params[:email], activo: params[:activo], rol: params[:rol]) %>
+            <% if params[:sort] == 'created_at' %>
+              <i class="fas fa-sort-<%= params[:order] == 'asc' ? 'up' : 'down' %>"></i>
+            <% end %>
+          </th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @usuarios.each do |usuario| %>
+          <tr>
+            <td><%= usuario.email %></td>
+            <td><%= usuario.username %></td>
+            <td><%= usuario.role.name %></td>
+            <td>
+              <span class="badge <%= usuario.active ? 'bg-success' : 'bg-danger' %>">
+                <%= usuario.active ? 'Activo' : 'Bloqueado' %>
+              </span>
+            </td>
+            <td><%= usuario.created_at.strftime('%Y-%m-%d') %></td>
+            <td>
+              <%= link_to admin_user_path(usuario), class: 'btn btn-outline-info btn-sm' do %>
+                <i class="fas fa-eye"></i> Ver
+              <% end %>
+              <%= link_to edit_admin_user_path(usuario), class: 'btn btn-outline-warning btn-sm' do %>
+                <i class="fas fa-edit"></i> Editar
+              <% end %>
+              <%= button_to (usuario.active ? 'Bloquear' : 'Activar'), toggle_active_admin_user_path(usuario), method: :post, class: "btn #{usuario.active ? 'btn-outline-danger' : 'btn-success'} btn-sm" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <%= paginate @usuarios, params: { email: params[:email], activo: params[:activo], rol: params[:rol], sort: params[:sort], order: params[:order] } %>
+
+  <!-- Botón de volver a inicio -->
+  <div class="mt-4">
+    <%= link_to root_path, class: 'btn btn-outline-secondary' do %>
+      <i class="fas fa-arrow-left"></i> Volver a inicio
+    <% end %>
+  </div>
+
+  <!-- Modal de confirmación -->
+  <%= render partial: 'shared/confirmation_modal' %>
+</section>
