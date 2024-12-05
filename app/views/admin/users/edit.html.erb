@@ -27,7 +27,11 @@
       <!-- Campo de Rol -->
       <div class="col-md-6 mb-3">
         <%= f.label :role, 'Rol', class: 'form-label' %>
-        <%= f.collection_select :role_id, Role.all, :id, :name, { prompt: 'Seleccione un rol' }, class: 'form-select' %>
+        <% if current_user == @user %>
+          <%= f.collection_select :role_id, Role.all, :id, :name, { prompt: 'Seleccione un rol' }, class: 'form-select', disabled: true %>
+        <% else %>
+          <%= f.collection_select :role_id, Role.all, :id, :name, { prompt: 'Seleccione un rol' }, class: 'form-select' %>
+        <% end %>
       </div>
 
       <!-- Campo de Contraseña (Opcional) -->

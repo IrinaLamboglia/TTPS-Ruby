@@ -6,107 +6,158 @@
     <h1 class="text-secondary fw-bold">Editar Producto</h1>
     <%= link_to 'Volver a Productos', admin_products_path, class: 'btn btn-outline-secondary' %>
   </div>
-
+  
   <% if flash.now[:error].present? %>
     <div class="alert alert-danger">
-        <%= flash.now[:error] %>
+      <%= flash.now[:error] %>
     </div>
-    <% end %>
+  <% end %>
 
   <%= form_with(model: @product, url: admin_product_path(@product), method: :patch, local: true, html: { multipart: true }) do |form| %>
     <div class="mb-3">
       <%= form.label :name, "Nombre del Producto", class: "form-label" %>
-      <%= form.text_field :name, class: "form-control" %>
+      <%= form.text_field :name, class: "form-control", value: @product.name %>
     </div>
   
     <div class="mb-3">
       <%= form.label :description, "Descripción", class: "form-label" %>
-      <%= form.text_area :description, class: "form-control" %>
+      <%= form.text_area :description, class: "form-control", value: @product.description %>
     </div>
   
     <div class="mb-3">
       <%= form.label :price, "Precio", class: "form-label" %>
-      <%= form.number_field :price, class: "form-control", step: 0.01 %>
+      <%= form.number_field :price, class: "form-control", step: 0.01, value: @product.price %>
     </div>
   
     <div class="mb-3">
       <%= form.label :stock, "Stock", class: "form-label" %>
-      <%= form.number_field :stock, class: "form-control" %>
+      <%= form.number_field :stock, class: "form-control", value: @product.stock %>
     </div>
   
     <div class="mb-3">
       <%= form.label :category_id, "Categoría", class: "form-label" %>
-      <%= form.collection_select :category_id, Category.all, :id, :name, { prompt: "Seleccione una categoría" }, class: "form-control" %>
+      <%= form.collection_select :category_id, Category.all, :id, :name, { prompt: "Seleccione una categoría", selected: @product.category_id }, class: "form-control" %>
     </div>
   
     <div class="mb-3">
       <%= form.label :color, "Color", class: "form-label" %>
-      <%= form.text_field :color, class: "form-control" %>
+      <%= form.text_field :color, class: "form-control", value: @product.color %>
     </div>
   
     <div class="mb-3">
       <%= form.label :size, "Tamaño", class: "form-label" %>
-      <%= form.text_field :size, class: "form-control" %>
+      <%= form.text_field :size, class: "form-control", value: @product.size %>
     </div>
   
     <div class="mb-3">
-      <%= form.label :images, "Seleccionar imágenes", class: "form-label" %>
-      <%= form.file_field :images, multiple: false, class: "form-control", id: "image-input" %>
+      <%= form.label :images, "Seleccionar nuevas imágenes", class: "form-label" %>
+      <%= form.file_field :images, multiple: true, class: "form-control", accept: "image/*", id: "image-input" %>
     </div>
-  
-    <!-- Contenedor para vista previa -->
-    <div id="image-preview-container" class="d-flex flex-wrap mt-3">
-      <!-- Imágenes existentes -->
+
+    <!-- Vista previa de imágenes actuales -->
+    <div id="image-preview-container" class="d-flex flex-wrap mt-3"  data-product-id="<%= @product.id %>">
       <% @product.images.each do |image| %>
         <div class="image-preview me-3 mb-3 position-relative" data-image-id="<%= image.id %>">
-          <%= image_tag image, class: "img-thumbnail", size: "150x150" %>
-          <%= button_to "Eliminar", delete_image_admin_product_path(image), method: :delete, class: "btn btn-danger btn-sm position-absolute top-0 end-0", data: { turbo_confirm: "¿Estás seguro?" } %>
+          <%= image_tag url_for(image), class: "img-thumbnail", style: "width: 150px; height: 150px;" %>
+          <button type="button" 
+                class="btn btn-danger btn-sm position-absolute top-0 end-0 delete-server-image" 
+                data-image-id="<%= image.id %>">
+          Eliminar
+        </button>
         </div>
       <% end %>
     </div>
-  
+
+
+    <%= hidden_field_tag "images_to_remove", "", id: "images-to-remove-field" %>
     <%= form.submit "Guardar cambios", class: "btn btn-primary mt-3" %>
   <% end %>
   
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const imageInput = document.getElementById("image-input");
-      const previewContainer = document.getElementById("image-preview-container");
+  document.addEventListener("DOMContentLoaded", () => {
+    const imageInput = document.getElementById("image-input");
+    const previewContainer = document.getElementById("image-preview-container");
   
-      imageInput.addEventListener("change", (event) => {
-        const files = event.target.files;
+    let selectedFiles = [];
   
-        Array.from(files).forEach((file) => {
-          const reader = new FileReader();
+    // Manejo de imágenes nuevas
+    imageInput.addEventListener("change", (event) => {
+      const files = Array.from(event.target.files);
+      selectedFiles.push(...files);
   
-          reader.onload = (e) => {
-            const previewDiv = document.createElement("div");
-            previewDiv.className = "image-preview me-3 mb-3 position-relative";
+      files.forEach((file, index) => {
+        const reader = new FileReader();
   
-            const img = document.createElement("img");
-            img.src = e.target.result;
-            img.className = "img-thumbnail";
-            img.style.width = "150px";
-            img.style.height = "150px";
+        reader.onload = (e) => {
+          const previewDiv = document.createElement("div");
+          previewDiv.className = "image-preview me-3 mb-3 position-relative";
+          previewDiv.dataset.index = selectedFiles.length - files.length + index;
   
-            const removeButton = document.createElement("button");
-            removeButton.className = "btn btn-danger btn-sm position-absolute top-0 end-0";
-            removeButton.textContent = "Eliminar";
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.className = "img-thumbnail";
+          img.style.width = "150px";
+          img.style.height = "150px";
   
-            removeButton.addEventListener("click", () => {
-              previewDiv.remove();
-            });
+          const removeButton = document.createElement("button");
+          removeButton.className = "btn btn-danger btn-sm position-absolute top-0 end-0";
+          removeButton.textContent = "Eliminar";
   
-            previewDiv.appendChild(img);
-            previewDiv.appendChild(removeButton);
-            previewContainer.appendChild(previewDiv);
-          };
+          removeButton.addEventListener("click", () => {
+            const indexToRemove = parseInt(previewDiv.dataset.index, 10);
+            selectedFiles = selectedFiles.filter((_, i) => i !== indexToRemove);
+            updateImageInput();
+            previewDiv.remove();
+          });
   
-          reader.readAsDataURL(file);
-        });
+          previewDiv.appendChild(img);
+          previewDiv.appendChild(removeButton);
+          previewContainer.appendChild(previewDiv);
+        };
+  
+        reader.readAsDataURL(file);
       });
+  
+      updateImageInput();
     });
+  
+    // Actualizar el input de archivos seleccionados
+    function updateImageInput() {
+      const dataTransfer = new DataTransfer();
+      selectedFiles.forEach((file) => dataTransfer.items.add(file));
+      imageInput.files = dataTransfer.files;
+    }
+  
+    // Manejo de eliminación de imágenes existentes
+    previewContainer.addEventListener("click", (event) => {
+      const button = event.target.closest(".delete-server-image");
+  
+      if (button) {
+        const imageId = button.dataset.imageId;
+        const productId = previewContainer.dataset.productId;
+        const previewDiv = button.closest(".image-preview");
+  
+        if (imageId && productId) {
+          fetch(`/admin/products/${productId}/delete_image/${imageId}`, {
+            method: "DELETE",
+            headers: {
+              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => {
+              if (response.ok) {
+                previewDiv.remove(); // Elimina la imagen del DOM
+              } else {
+                alert("Error al eliminar la imagen.");
+              }
+            })
+            .catch(() => {
+              alert("No se pudo conectar con el servidor.");
+            });
+        }
+      }
+    });
+  });
   </script>
-  
-  
 </section>

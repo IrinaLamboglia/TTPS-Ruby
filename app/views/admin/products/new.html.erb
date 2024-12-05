@@ -50,7 +50,7 @@
   
     <div class="mb-3">
       <%= form.label :images, "Seleccionar imágenes", class: "form-label" %>
-      <%= form.file_field :images, multiple: false, class: "form-control", id: "image-input" %>
+      <%= form.file_field :images,multiple: true, class: "form-control",accept: "image/*" ,id: "image-input" %>
     </div>
   
     <!-- Contenedor para vista previa -->
@@ -62,43 +62,64 @@
   <% end %>
   
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const imageInput = document.getElementById("image-input");
-      const previewContainer = document.getElementById("image-preview-container");
+  document.addEventListener("DOMContentLoaded", () => {
+    const imageInput = document.getElementById("image-input");
+    const previewContainer = document.getElementById("image-preview-container");
   
-      imageInput.addEventListener("change", (event) => {
-        const files = event.target.files;
+    let selectedFiles = []; // Array para almacenar los archivos seleccionados.
   
-        Array.from(files).forEach((file) => {
-          const reader = new FileReader();
+    imageInput.addEventListener("change", (event) => {
+      const files = Array.from(event.target.files);
   
-          reader.onload = (e) => {
-            const previewDiv = document.createElement("div");
-            previewDiv.className = "image-preview me-3 mb-3 position-relative";
+      // Agregar los nuevos archivos al array de seleccionados.
+      selectedFiles.push(...files);
   
-            const img = document.createElement("img");
-            img.src = e.target.result;
-            img.className = "img-thumbnail";
-            img.style.width = "150px";
-            img.style.height = "150px";
+      // Actualizar la previsualización.
+      files.forEach((file, index) => {
+        const reader = new FileReader();
   
-            const removeButton = document.createElement("button");
-            removeButton.className = "btn btn-danger btn-sm position-absolute top-0 end-0";
-            removeButton.textContent = "Eliminar";
+        reader.onload = (e) => {
+          const previewDiv = document.createElement("div");
+          previewDiv.className = "image-preview me-3 mb-3 position-relative";
+          previewDiv.dataset.index = selectedFiles.length - files.length + index; // Guardar índice.
   
-            removeButton.addEventListener("click", () => {
-              previewDiv.remove();
-            });
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.className = "img-thumbnail";
+          img.style.width = "150px";
+          img.style.height = "150px";
   
-            previewDiv.appendChild(img);
-            previewDiv.appendChild(removeButton);
-            previewContainer.appendChild(previewDiv);
-          };
+          const removeButton = document.createElement("button");
+          removeButton.className = "btn btn-danger btn-sm position-absolute top-0 end-0";
+          removeButton.textContent = "Eliminar";
   
-          reader.readAsDataURL(file);
-        });
+          // Eliminar la imagen de la previsualización y del array.
+          removeButton.addEventListener("click", () => {
+            const indexToRemove = parseInt(previewDiv.dataset.index, 10);
+            selectedFiles = selectedFiles.filter((_, i) => i !== indexToRemove);
+            updateImageInput();
+            previewDiv.remove();
+          });
+  
+          previewDiv.appendChild(img);
+          previewDiv.appendChild(removeButton);
+          previewContainer.appendChild(previewDiv);
+        };
+  
+        reader.readAsDataURL(file);
       });
+  
+      // Actualizar el campo de entrada con los archivos seleccionados.
+      updateImageInput();
     });
+  
+    // Función para actualizar el contenido del input.
+    function updateImageInput() {
+      const dataTransfer = new DataTransfer();
+      selectedFiles.forEach((file) => dataTransfer.items.add(file));
+      imageInput.files = dataTransfer.files;
+    }
+  });
   </script>
   
   

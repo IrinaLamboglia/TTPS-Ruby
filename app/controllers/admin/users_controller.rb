@@ -1,8 +1,7 @@
 class Admin::UsersController < ApplicationController
       before_action :authenticate_user! # Devise
       before_action :set_usuario, only: [:edit, :update, :toggle_active]
-      before_action :require_manager_or_admin, only: [:index, :edit, :update]
-      before_action :require_admin, only: [:new,:create, :toggle_active]
+      before_action :require_manager_or_admin, only: [:index, :new, :create, :toggle_active, :edit, :update]
     
 
 

@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :products do
       member do
-        delete :delete_image
+        delete 'delete_image/:image_id', to: 'products#delete_image', as: 'delete_product_image'
       end
     end
     resources :sales

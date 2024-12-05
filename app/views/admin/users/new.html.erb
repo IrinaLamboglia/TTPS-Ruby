@@ -35,9 +35,17 @@
       </div>
 
       <!-- Campo de Rol -->
-      <div class="col-md-6">
-        <%= f.label :role_id, 'Rol', class: 'form-label' %>
-        <%= f.collection_select :role_id, Role.all, :id, :name, { prompt: 'Selecciona un rol' }, class: 'form-select' %>
+      <div class="mb-3">
+        <%= f.label :role_id, "Rol", class: "form-label" %>
+        <%= f.select :role_id, 
+          options_from_collection_for_select(
+            current_user.admin? ? @roles : @roles.where.not(name: 'admin'), 
+            :id, 
+            :name
+          ), 
+          { prompt: "Seleccione un rol" }, 
+          class: "form-select", 
+          required: true %>
       </div>
 
       <!-- Campo de Contraseña -->

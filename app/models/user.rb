@@ -30,8 +30,24 @@ class User < ApplicationRecord
   def deactivate!
     update(active: false, password: SecureRandom.hex)
   end
-  private 
 
+  # Métodos para verificar roles
+  def admin?
+    role.name == 'admin'
+  end
+
+  def manager?
+    role.name == 'gerente'
+  end
+
+  def employee?
+    role.name == 'empleado'
+  end
+
+
+
+  private 
+  
   def set_join_date
     self.join_date ||= Date.today
   end

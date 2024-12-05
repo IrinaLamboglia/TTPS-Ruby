@@ -9,10 +9,26 @@
 
   <!-- Detalle del producto -->
   <div class="row">
-    <!-- Imagen del producto -->
+    <!-- Carrusel de imágenes del producto -->
     <div class="col-md-6 text-center">
       <% if @product.images.attached? %>
-        <%= image_tag @product.images.first.variant(resize_to_fill: [500, 500]), class: "img-fluid rounded shadow-lg" %>
+        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <% @product.images.each_with_index do |image, index| %>
+              <div class="carousel-item <%= 'active' if index == 0 %>">
+                <%= image_tag image.variant(resize_to_fill: [500, 500]), class: "d-block w-100 img-fluid rounded shadow-lg" %>
+              </div>
+            <% end %>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
       <% else %>
         <%= image_tag "placeholder.png", class: "img-fluid rounded shadow-lg" %>
       <% end %>
