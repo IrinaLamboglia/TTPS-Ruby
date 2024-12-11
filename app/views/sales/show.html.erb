@@ -1,16 +1,54 @@
 <div class="container my-5">
-  <h1 class="text-center mb-4">Detalles de la Venta</h1>
-  <div class="card shadow">
-    <div class="card-body">
-      <p><strong>Fecha:</strong> <%= @sale.created_at.strftime("%d/%m/%Y %H:%M") %></p>
-      <p><strong>Total:</strong> $<%= @sale.total %></p>
-      <p><strong>Empleado:</strong> <%= @sale.user.name %></p>
-      <h5>Productos Vendidos:</h5>
-      <ul>
-        <% @sale.sale_items.each do |item| %>
-          <li><%= item.product.name %> - Cantidad: <%= item.quantity %> - Precio por unidad: $<%= item.price %></li>
-        <% end %>
-      </ul>
+  <!-- Encabezado de la Venta -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+      <h3 class="mb-0">Detalles de la Venta</h3>
     </div>
+    <div class="card-body">
+      <p><strong>Fecha:</strong> <%= @sale.date.strftime("%d/%m/%Y %H:%M") %></p>
+      <p><strong>Total:</strong> <span class="text-success fw-bold">$<%= @sale.total %></span></p>
+      <p><strong>Empleado Responsable:</strong> <%= @sale.employee.username %></p>
+      <p><strong>Cliente:</strong> <%= @sale.customer.username %></p>
+    </div>
+  </div>
+
+  <!-- Lista de Productos Vendidos -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-secondary text-white">
+      <h4 class="mb-0">Productos Vendidos</h4>
+    </div>
+    <div class="card-body">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Producto</th>
+            <th scope="col">Cantidad</th>
+            <th scope="col">Precio Unitario</th>
+            <th scope="col">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @sale.sale_items.each do |item| %>
+            <tr>
+              <td><%= item.product.name %></td>
+              <td><%= item.quantity %></td>
+              <td>$<%= item.price %></td>
+              <td>$<%= item.quantity * item.price %></td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="text-end fw-bold">Total General:</td>
+            <td class="fw-bold text-success">$<%= @sale.total %></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- Botón para regresar -->
+  <div class="mt-4 text-center">
+    <a href="<%= sales_path %>" class="btn btn-outline-primary">Volver a la Lista de Ventas</a>
   </div>
 </div>

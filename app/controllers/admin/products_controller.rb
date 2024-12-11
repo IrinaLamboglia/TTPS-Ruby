@@ -1,7 +1,8 @@
 class Admin::ProductsController < ApplicationController
   before_action :authenticate_user! # Devise
   before_action :set_product, only: [:edit, :update, :destroy, :toggle_stock,:delete_image]
-  before_action :require_manager_or_admin, only: [:index, :edit, :update, :toggle_stock,:new, :create, :destroy]
+  before_action :require_permission, only: [:index, :edit, :update, :toggle_stock, :new, :create, :destroy]
+
   # Listar productos
   def index
     @products = Product.order(sort_column => sort_direction)
@@ -112,6 +113,11 @@ class Admin::ProductsController < ApplicationController
     redirect_to admin_products_path
   end
 
+  def price
+    product = Product.find(params[:id])
+    render json: { price: product.price }
+  end
+
   private
 
   def set_product
@@ -134,6 +140,12 @@ class Admin::ProductsController < ApplicationController
     if current_user.role.name == "gerente" && @user.role.name == "admin"
       flash[:alert] = "No tienes permiso para modificar un usuario con rol de Administrador."
       redirect_to admin_users_path
+    end
+  end
+  
+  def require_permission
+    unless current_user.role.has_permission?('manage_products')
+      redirect_to root_path, alert: 'No tienes permiso para realizar esta acción.'
     end
   end
 end

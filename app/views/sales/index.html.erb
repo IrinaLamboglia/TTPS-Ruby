@@ -1,40 +1,94 @@
-<div class="container my-5">
-  <h1 class="text-center mb-4">Historial de Ventas</h1>
-  <div class="card shadow">
-    <div class="card-body">
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Fecha</th>
-            <th>Total</th>
-            <th>Productos</th>
-            <th>Empleado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @sales.each_with_index do |sale, index| %>
-            <tr>
-              <td><%= index + 1 %></td>
-              <td><%= sale.created_at.strftime("%d/%m/%Y %H:%M") %></td>
-              <td>$<%= sale.total %></td>
-              <td>
-                <% sale.sale_items.each do |item| %>
-                  <p><%= item.product.name %> (x<%= item.quantity %>)</p>
-                <% end %>
-              </td>
-              <td><%= sale.user.name %></td>
-              <td>
-                <%= link_to "Ver", sale_path(sale), class: "btn btn-dark btn-sm" %>
-                <%= link_to "Editar", edit_sale_path(sale), class: "btn btn-warning btn-sm" %>
-                <%= link_to "Eliminar", sale_path(sale), method: :delete, class: "btn btn-danger btn-sm", data: { confirm: "¿Estás seguro de eliminar esta venta?" } %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-      <%= link_to "Registrar Nueva Venta", new_sale_path, class: "btn btn-primary mt-3" %>
-    </div>
+<%= content_for :title, "Ventas" %>
+
+<section class="container mt-5">
+  <!-- Título y botón de acción principal -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-secondary fw-bold">Ventas</h1>
+    <%= link_to new_sale_path, class: 'btn btn-outline-primary' do %>
+      <i class="fas fa-plus"></i> Registrar Venta
+    <% end %>
   </div>
-</div>
+
+  <!-- Tabla de ventas -->
+  <div class="table-responsive text-center">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-primary text-dark">
+        <tr>
+          <th>Fecha</th>
+          <th>Empleado</th>
+          <th>Cliente</th>
+          <th>Total</th>
+          <th>Estado</th> <!-- Nueva columna para mostrar el estado -->
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @sales.each do |sale| %>
+          <tr>
+            <td><%= sale.date.strftime('%Y-%m-%d %H:%M') %></td>
+            <td><%= sale.employee.username %></td>
+            <td><%= sale.customer.username %></td>
+            <td><%= number_to_currency(sale.total) %></td>
+            <td>
+              <% if sale.deleted_at.nil? %> <!-- Verificar si está cancelada -->
+                <span class="badge bg-success">Activa</span>
+              <% else %>
+                <span class="badge bg-danger">Cancelada</span>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to sale_path(sale), class: 'btn btn-outline-info btn-sm' do %>
+                <i class="fas fa-eye"></i> Ver
+              <% end %>
+
+              <%= button_to 'Cancelar', cancel_sale_path(sale), method: :post, data: { confirm: '¿Estás seguro de que deseas cancelar esta venta?' }, class: 'btn btn-outline-danger btn-sm' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <nav aria-label="Paginación" class="mt-5">
+    <ul class="pagination justify-content-center">
+      <!-- Flecha de página anterior -->
+      <% if @sales.prev_page %>
+        <li class="page-item">
+          <%= link_to raw('<i class="fas fa-chevron-left"></i>'), url_for(page: @sales.prev_page), class: "page-link rounded-circle bg-dark text-white border-0 shadow" %>
+        </li>
+      <% else %>
+        <li class="page-item disabled">
+          <span class="page-link rounded-circle bg-secondary text-white border-0 shadow"><i class="fas fa-chevron-left"></i></span>
+        </li>
+      <% end %>
+
+      <!-- Números de página -->
+      <% (1..@sales.total_pages).each do |page_num| %>
+        <% css_class = "page-link rounded-circle border-0 shadow " %>
+        <% css_class += page_num == @sales.current_page ? "bg-dark text-white" : "bg-light text-dark" %>
+        <li class="page-item <%= 'active' if page_num == @sales.current_page %>">
+          <%= link_to page_num, url_for(page: page_num), class: css_class %>
+        </li>
+      <% end %>
+
+      <!-- Flecha de página siguiente -->
+      <% if @sales.next_page %>
+        <li class="page-item">
+          <%= link_to raw('<i class="fas fa-chevron-right"></i>'), url_for(page: @sales.next_page), class: "page-link rounded-circle bg-dark text-white border-0 shadow" %>
+        </li>
+      <% else %>
+        <li class="page-item disabled">
+          <span class="page-link rounded-circle bg-secondary text-white border-0 shadow"><i class="fas fa-chevron-right"></i></span>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+
+  <!-- Botón de volver a inicio -->
+  <div class="mt-4">
+    <%= link_to root_path, class: 'btn btn-outline-secondary' do %>
+      <i class="fas fa-arrow-left"></i> Volver a inicio
+    <% end %>
+  </div>
+</section>

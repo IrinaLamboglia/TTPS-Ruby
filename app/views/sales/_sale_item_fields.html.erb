@@ -1,0 +1,19 @@
+<div class="nested-fields sale-item-fields card p-3 mb-3">
+  <div class="row">
+    <div class="col-md-6">
+      <%= f.label :product_id, "Producto", class: "form-label" %>
+      <%= f.collection_select :product_id, @products, :id, :name, prompt: "Seleccione un producto", class: "form-select product-select" %>
+    </div>
+    <div class="col-md-3">
+      <%= f.label :quantity, "Cantidad", class: "form-label" %>
+      <%= f.number_field :quantity, class: "form-control", min: 1 %>
+    </div>
+    <div class="col-md-3">
+      <%= f.label :price, "Precio", class: "form-label" %>
+      <%= f.number_field :price, class: "form-control price-field", step: 0.01, readonly: true %>
+    </div>
+  </div>
+  <div class="text-end mt-2">
+    <%= link_to_remove_association "Eliminar", f, class: "btn btn-outline-danger btn-sm" %>
+  </div>
+</div>

@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  get "sale/index"
+  get "sale/show"
+  get "sale/new"
+  get "sale/create"
+  get "sale/cancel"
+  get "sale/set_sale"
 
   devise_for :users, controllers: {
   sessions: 'sessions'
@@ -19,8 +25,12 @@ Rails.application.routes.draw do
 
   # Rutas principales para productos y ventas
   resources :products
-  resources :sales
-
+  resources :sales do
+    member do
+      post :cancel
+    end
+  end
+  
   # Administración (requiere autenticación y roles)
   namespace :admin do
     resources :products do
@@ -33,6 +43,8 @@ Rails.application.routes.draw do
       member do
         post :toggle_active
         patch :update
+        get :edit_profile
+        patch :update_profile
       end
       collection do
         get :index

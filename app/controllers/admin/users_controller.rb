@@ -1,7 +1,7 @@
 class Admin::UsersController < ApplicationController
       before_action :authenticate_user! # Devise
-      before_action :set_usuario, only: [:edit, :update, :toggle_active]
-      before_action :require_manager_or_admin, only: [:index, :new, :create, :toggle_active, :edit, :update]
+      before_action :set_usuario, only: [:edit, :update, :toggle_active, :edit_profile]
+      before_action :require_permission, only: [:index, :new, :create, :toggle_active, :edit, :update]
     
 
 
@@ -71,6 +71,26 @@ class Admin::UsersController < ApplicationController
       def show
         @user = User.find(params[:id])
       end
+
+      # Editar perfil del usuario actual
+      def edit_profile
+          @user = current_user
+      end
+
+      # Actualizar perfil del usuario actual
+      def update_profile
+        @user = current_user # Ya establece el usuario actual
+        clean_params = user_params.except(:role_id)
+        clean_params = clean_params.except(:password, :password_confirmation) if clean_params[:password].blank? && clean_params[:password_confirmation].blank?
+      
+        if @user.update(clean_params)
+          flash[:success] = "Perfil actualizado correctamente"
+          redirect_to root_path
+        else
+          flash.now[:error] = @user.errors.full_messages.to_sentence
+          render :edit_profile
+        end
+      end
     
       private
     
@@ -90,6 +110,10 @@ class Admin::UsersController < ApplicationController
         params[:order] || "asc"
       end
 
-      
+      def require_permission
+        unless current_user.role.has_permission?('manage_users')
+          redirect_to root_path, alert: 'No tienes permiso para realizar esta acción.'
+        end
+      end
     end
     

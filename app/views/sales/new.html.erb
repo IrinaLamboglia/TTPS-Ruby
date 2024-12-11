@@ -1,34 +1,182 @@
-<div class="container my-5">
-  <h1 class="text-center mb-4">Registrar Nueva Venta</h1>
-  <div class="card shadow">
-    <div class="card-body">
-      <%= form_with model: @sale, local: true do |form| %>
-        <div class="mb-3">
-          <%= form.label :total, "Total de la Venta ($)", class: "form-label" %>
-          <%= form.number_field :total, step: 0.01, class: "form-control", placeholder: "Total calculado automáticamente", readonly: true %>
-        </div>
+<h1 class="mb-4">Registrar Venta</h1>
 
-        <div id="products-container">
-          <%= form.fields_for :sale_items do |item_form| %>
-            <div class="mb-3">
-              <%= item_form.label :product_id, "Producto", class: "form-label" %>
-              <%= item_form.collection_select :product_id, Product.all, :id, :name, class: "form-control" %>
-            </div>
-            <div class="mb-3">
-              <%= item_form.label :quantity, "Cantidad", class: "form-label" %>
-              <%= item_form.number_field :quantity, class: "form-control" %>
-            </div>
-            <div class="mb-3">
-              <%= item_form.label :price, "Precio por Unidad ($)", class: "form-label" %>
-              <%= item_form.number_field :price, step: 0.01, class: "form-control" %>
-            </div>
-          <% end %>
-        </div>
-
-        <div class="text-center">
-          <%= form.submit "Registrar Venta", class: "btn btn-dark w-100" %>
-        </div>
+<% if @sale.errors.any? %>
+  <div class="alert alert-danger">
+    <h4><%= pluralize(@sale.errors.count, "error") %> impidió guardar la venta:</h4>
+    <ul>
+      <% @sale.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
       <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @sale, url: sales_path, local: true do |form| %>
+
+  <!-- Empleado Responsable y Cliente -->
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :employee_id, "Empleado Responsable", class: "form-label fw-bold" %>
+      <%= form.collection_select :employee_id, User.where(role_id: Role.find_by(name: "empleado")), :id, :username, prompt: "Seleccionar Empleado", class: "form-select" %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= form.label :customer_id, "Cliente", class: "form-label fw-bold" %>
+      <%= form.collection_select :customer_id, @customers, :id, :username, prompt: "Seleccionar Cliente", class: "form-select" %>
     </div>
   </div>
-</div>
+
+  <!-- Fecha y Hora -->
+  <div class="mb-3">
+    <%= form.label :date, "Fecha y Hora", class: "form-label fw-bold" %>
+    <%= form.text_field :date, class: "form-control datetimepicker-input", id: "datetimepicker1" %>
+  </div>
+
+  <!-- Tabla de Productos -->
+  <h3 class="mt-4">Productos</h3>
+  <div id="sale-items">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Total</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Fila de plantilla -->
+        <tr class="sale-item-fields" data-template="true" style="display: none;">
+          <td>
+            <select name="sale[sale_items_attributes][][product_id]" class="form-select product-select">
+              <option value="" selected>Seleccione un producto</option>
+              <% @products.each do |product| %>
+                <option value="<%= product.id %>" data-price="<%= product.price %>">
+                  <%= product.name %> (Stock: <%= product.stock %>)
+                </option>
+              <% end %>
+            </select>
+          </td>
+          <td>
+            <input name="sale[sale_items_attributes][][quantity]" type="number" class="form-control quantity-field" min="1" value="1" />
+          </td>
+          <td>
+            <input name="sale[sale_items_attributes][][price]" type="number" class="form-control price-field" step="0.01" readonly />
+          </td>
+          <td class="item-total">0.00</td>
+          <td>
+            <button type="button" class="btn btn-danger remove-item">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Botón para agregar producto -->
+  <div class="mb-3">
+    <button type="button" id="add-product" class="btn btn-outline-success">Agregar Producto</button>
+  </div>
+
+  <!-- Total General -->
+  <div class="mt-3">
+    <h4>Total General: $<span id="grand-total">0.00</span></h4>
+  </div>
+
+  <!-- Botón para registrar venta -->
+  <div class="mt-4">
+    <%= form.submit "Registrar Venta", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const saleItemsTable = document.querySelector("#sale-items tbody");
+  const addProductButton = document.getElementById("add-product");
+  const templateRow = document.querySelector(".sale-item-fields[data-template='true']");
+  const form = document.querySelector("form");
+
+  // Inicializar flatpickr para el campo de fecha y hora
+  flatpickr("#datetimepicker1", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+    time_24hr: true
+  });
+
+  // Agregar nueva fila
+  addProductButton.addEventListener("click", () => {
+    const newRow = templateRow.cloneNode(true);
+    newRow.style.display = ""; // Mostrar fila
+    newRow.removeAttribute("data-template");
+    resetRow(newRow);
+    saleItemsTable.appendChild(newRow);
+  });
+
+  // Eliminar fila
+  saleItemsTable.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-item")) {
+      e.target.closest("tr").remove();
+      updateTotal();
+    }
+  });
+
+  // Actualizar precio y total
+  saleItemsTable.addEventListener("change", (e) => {
+    if (e.target.classList.contains("product-select")) {
+      const row = e.target.closest("tr");
+      const priceField = row.querySelector(".price-field");
+      const selectedOption = e.target.options[e.target.selectedIndex];
+
+      // Asignar precio del producto seleccionado
+      priceField.value = selectedOption.dataset.price || "0.00";
+      updateRowTotal(row);
+      updateTotal();
+    }
+  });
+
+  saleItemsTable.addEventListener("input", (e) => {
+    if (e.target.classList.contains("quantity-field")) {
+      const row = e.target.closest("tr");
+      updateRowTotal(row);
+      updateTotal();
+    }
+  });
+
+  // Evitar enviar campos vacíos al servidor
+  form.addEventListener("submit", (e) => {
+    const rows = document.querySelectorAll(".sale-item-fields");
+
+    rows.forEach((row) => {
+      const productField = row.querySelector(".product-select");
+      const quantityField = row.querySelector(".quantity-field");
+      const priceField = row.querySelector(".price-field");
+
+      // Si los campos están vacíos, elimina la fila
+      if (!productField.value || !quantityField.value || !priceField.value) {
+        row.remove();
+      }
+    });
+  });
+
+  // Función para resetear la fila
+  function resetRow(row) {
+    row.querySelectorAll("input, select").forEach((input) => (input.value = ""));
+    row.querySelector(".item-total").textContent = "0.00";
+  }
+
+  // Función para calcular el total de la fila
+  function updateRowTotal(row) {
+    const quantity = parseFloat(row.querySelector(".quantity-field").value) || 0;
+    const price = parseFloat(row.querySelector(".price-field").value) || 0;
+    row.querySelector(".item-total").textContent = (quantity * price).toFixed(2);
+  }
+
+  // Función para actualizar el total general
+  function updateTotal() {
+    const totals = Array.from(saleItemsTable.querySelectorAll(".item-total")).map((totalCell) =>
+      parseFloat(totalCell.textContent) || 0
+    );
+    const grandTotal = totals.reduce((sum, value) => sum + value, 0).toFixed(2);
+    document.getElementById("grand-total").textContent = grandTotal;
+  }
+});
+</script>

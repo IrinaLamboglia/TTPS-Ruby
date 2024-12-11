@@ -34,7 +34,7 @@ end
 # Crear roles y asignar permisos
 roles = {
   "admin" => ["manage_users", "manage_products", "manage_sales"],
-  "gerente" => ["manage_products", "manage_sales"],
+  "gerente" => ["manage_users,manage_products", "manage_sales"],
   "empleado" => ["manage_products", "manage_sales"]
 }
 

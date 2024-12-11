@@ -139,3 +139,11 @@
 .card-footer {
   padding: 0.5rem;
 }
+
+.sale-item {
+  background-color: #f9f9f9;
+}
+
+.sale-item .btn-danger {
+  float: right;
+}

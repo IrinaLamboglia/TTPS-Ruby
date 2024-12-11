@@ -6,6 +6,8 @@ class Product < ApplicationRecord
 
   belongs_to :category
   has_many_attached :images, dependent: :destroy # Relación uno a muchos
+  has_many :sale_items
+  has_many :sales, through: :sale_items
 
   # Validaciones
   validates :name, presence: true
