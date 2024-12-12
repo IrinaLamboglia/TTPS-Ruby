@@ -1,6 +1,6 @@
 class ImagesController < ApplicationController
     before_action :set_product
-  
+
     # Crear una imagen vinculada a un producto
     def create
       @image = @product.images.attach(params[:image]) # Active Storage
@@ -10,7 +10,7 @@ class ImagesController < ApplicationController
         redirect_to @product, alert: "Error al subir la imagen."
       end
     end
-  
+
     # Eliminar una imagen específica
     def destroy
       @image = @product.images.find(params[:id])
@@ -20,11 +20,10 @@ class ImagesController < ApplicationController
         redirect_to @product, alert: "Error al eliminar la imagen."
       end
     end
-  
+
     private
-  
+
     def set_product
       @product = Product.find(params[:product_id])
     end
-  end
-  
+end

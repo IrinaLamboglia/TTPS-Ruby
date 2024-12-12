@@ -63,12 +63,13 @@ group :test do
 end
 
 gem "bootstrap", "~> 5.3"
-gem 'sassc-rails'
-gem 'active_storage_validations'
-gem 'bcrypt', '~> 3.1.7'
-gem 'devise'
-gem 'mini_magick'
-gem 'image_processing', '~> 1.2'
-gem 'kaminari'
-gem 'rails_sortable'
-gem 'cocoon'
+gem "sassc-rails"
+gem "active_storage_validations"
+gem "bcrypt", "~> 3.1.7"
+gem "devise"
+gem "mini_magick"
+gem "image_processing", "~> 1.2"
+gem "kaminari"
+gem "rails_sortable"
+gem "cocoon"
+gem 'minitest'

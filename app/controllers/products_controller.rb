@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index, :show]
-  
+  skip_before_action :authenticate_user!, only: [ :index, :show ]
+
   # Mostrar el catálogo público
   def index
     @categories = Category.all  # Trae todas las categorías
@@ -10,7 +10,7 @@ class ProductsController < ApplicationController
 
     # Filtro por nombre de producto
     if params[:query].present?
-      @products = @products.where('name LIKE ?', "%#{params[:query]}%")
+      @products = @products.where("name LIKE ?", "%#{params[:query]}%")
     end
 
     # Filtro por categoría
@@ -20,11 +20,11 @@ class ProductsController < ApplicationController
 
     # Ordenar productos
     if params[:order_by].present?
-      order_column = params[:order_by] == 'price' ? :price : :name
+      order_column = params[:order_by] == "price" ? :price : :name
       @products = @products.order(order_column)
     end
   end
-  
+
   def show
     @product = Product.find_by(id: params[:id])
     unless @product
@@ -36,7 +36,7 @@ class ProductsController < ApplicationController
   def show
     @product = Product.find(params[:id])
     if  @product.stock <= 0
-      redirect_to products_path, alert: 'El producto no está disponible.'
+      redirect_to products_path, alert: "El producto no está disponible."
     end
   end
 end

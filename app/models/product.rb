@@ -21,7 +21,7 @@ class Product < ApplicationRecord
 
   # Validación para la creación: el producto debe tener al menos una imagen.
   def must_have_images
-    errors.add( :images,"debe tener al menos una imagen") unless images.attached?
+    errors.add(:images, "debe tener al menos una imagen") unless images.attached?
   end
 
   # Validación para la actualización: debe haber al menos una imagen si se eliminan todas las anteriores.

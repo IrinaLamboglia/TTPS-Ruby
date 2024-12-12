@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_admin
-    redirect_to root_path, alert: "Acceso denegado." unless current_user&.role&.name == 'admin'
+    redirect_to root_path, alert: "Acceso denegado." unless current_user&.role&.name == "admin"
   end
 
   def require_manager_or_admin

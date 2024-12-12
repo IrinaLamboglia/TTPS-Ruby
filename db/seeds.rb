@@ -1,67 +1,127 @@
-# db/seeds.rb
-# Crear categorías
-categories = ["Ropa", "Accesorios", "Calzado"].map do |category_name|
-  Category.find_or_create_by!(name: category_name)
-end
-
-# Crear productos
-10.times do |i|
-  product = Product.new(
-    name: "Producto #{i + 1}",
-    description: "Descripción del producto #{i + 1}",
-    price: rand(10..100),
-    stock: rand(1..50),
-    category: categories.sample
-  )
-
-  # Adjuntar una imagen
-  begin
-    product.images.attach(io: File.open(Rails.root.join("app/assets/images/ejemplo.jpg")), filename: "ejemplo.jpg", content_type: "image/jpg")
-    product.save!(validate: false) # Guardar sin validaciones
-    product.save! # Guardar con validaciones
-  rescue => e
-    puts "Error al adjuntar imagen para producto #{product.name}: #{e.message}"
-  end
-end
-
 # Crear permisos
-permissions = ["manage_users", "manage_products", "manage_sales"].map do |permission_name|
-  permission = Permission.find_or_create_by!(name: permission_name)
-  puts "Permiso creado: #{permission.name}"
-  permission
-end
-
-# Crear roles y asignar permisos
-roles = {
-  "admin" => ["manage_users", "manage_products", "manage_sales"],
-  "gerente" => ["manage_users,manage_products", "manage_sales"],
-  "empleado" => ["manage_products", "manage_sales"]
+permissions = {
+  "manage_users" => Permission.find_or_create_by!(name: "manage_users"),
+  "manage_products" => Permission.find_or_create_by!(name: "manage_products"),
+  "manage_sales" => Permission.find_or_create_by!(name: "manage_sales")
 }
 
-roles.each do |role_name, role_permissions|
-  role = Role.find_or_create_by!(name: role_name)
-  puts "Rol creado: #{role.name}"
-  role_permissions.each do |permission_name|
-    permission = Permission.find_by(name: permission_name)
-    if permission
-      RolePermission.find_or_create_by!(role: role, permission: permission)
-      puts "Asignado permiso '#{permission.name}' al rol '#{role.name}'"
+# Crear roles con permisos
+roles = {
+  "admin" => Role.find_or_create_by!(name: "admin"),
+  "gerente" => Role.find_or_create_by!(name: "gerente"),
+  "empleado" => Role.find_or_create_by!(name: "empleado"),
+  "comun" => Role.find_or_create_by!(name: "comun")
+}
+
+roles["admin"].permissions = permissions.values
+roles["gerente"].permissions = permissions.values
+roles["empleado"].permissions = [permissions["manage_products"], permissions["manage_sales"]]
+roles["comun"].permissions = []
+
+roles.each { |name, role| role.save! }
+
+# Crear categorías
+categories = {
+  "Ropa" => Category.find_or_create_by!(name: "Ropa"),
+  "Calzado" => Category.find_or_create_by!(name: "Calzado")
+}
+
+# Cargar productos
+productos = [
+  {
+    name: "Pantalón Casual",
+    description: "Cómodo pantalón para uso diario.",
+    price: 30.0,
+    stock: 20,
+    category: categories["Ropa"],
+    images: ["pantalon1.jpg", "pantalon2.jpg"]
+  },
+  {
+    name: "Remera Lisa",
+    description: "Remera ideal para cualquier ocasión.",
+    price: 15.0,
+    stock: 50,
+    category: categories["Ropa"],
+    images: ["remera1.jpg", "remera2.jpg", "remera3.jpg"]
+  },
+  {
+    name: "Zapatillas Vans",
+    description: "Clásicas Vans, cómodas y con estilo.",
+    price: 60.0,
+    stock: 10,
+    category: categories["Calzado"],
+    images: ["zapatillas1.jpg", "zapatillas2.jpg"]
+  }
+]
+
+productos.each do |producto|
+  product = Product.new(
+    name: producto[:name],
+    description: producto[:description],
+    price: producto[:price],
+    stock: producto[:stock],
+    category: producto[:category]
+  )
+
+  producto[:images].each do |image|
+    image_path = Rails.root.join("app/assets/images", image)
+    if File.exist?(image_path)
+      product.images.attach(io: File.open(image_path), filename: image, content_type: "image/jpeg")
     else
-      puts "Permiso '#{permission_name}' no encontrado"
+      puts "Imagen no encontrada: #{image_path}"
     end
   end
-end
-# Crear usuarios con Devise
-roles.keys.each do |role_name|
-  role = Role.find_by(name: role_name)
-  User.find_or_create_by!(
-    username: "#{role_name}_user",
-    email: "#{role_name}@example.com",
-    phone: "1234567890",
-    role: role,
-    join_date: Date.today
-  ) do |user|
-    user.password = "password"
-    user.password_confirmation = "password"
+
+  if product.save
+    puts "Producto creado: #{product.name}"
+  else
+    puts "Error al crear producto: #{product.errors.full_messages.join(", ")}"
   end
 end
+
+# Crear usuarios
+User.create!(
+  username: "admin_user",
+  email: "admin@example.com",
+  phone: "1234567890",
+  active: true,
+  role: roles["admin"],
+  join_date: Date.today,
+  password: "password",
+  password_confirmation: "password"
+)
+
+2.times do |i|
+  User.create!(
+    username: "gerente_user_#{i + 1}",
+    email: "gerente#{i + 1}@example.com",
+    phone: "123456789#{i + 1}",
+    role: roles["gerente"],
+    join_date: Date.today,
+    password: "password",
+    password_confirmation: "password"
+  )
+
+  User.create!(
+    username: "empleado_user_#{i + 1}",
+    email: "empleado#{i + 1}@example.com",
+    phone: "123456780#{i + 1}",
+    role: roles["empleado"],
+    join_date: Date.today,
+    password: "password",
+    password_confirmation: "password"
+  )
+
+  User.create!(
+    username: "comun_user_#{i + 1}",
+    email: "comun#{i + 1}@example.com",
+    phone: "123456770#{i + 1}",
+    role: roles["comun"],
+    join_date: Date.today,
+    password: "password",
+    password_confirmation: "password"
+  )
+end
+
+
+puts "Seeds completados con éxito."

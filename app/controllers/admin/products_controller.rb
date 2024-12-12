@@ -1,7 +1,7 @@
 class Admin::ProductsController < ApplicationController
   before_action :authenticate_user! # Devise
-  before_action :set_product, only: [:edit, :update, :destroy, :toggle_stock,:delete_image]
-  before_action :require_permission, only: [:index, :edit, :update, :toggle_stock, :new, :create, :destroy]
+  before_action :set_product, only: [ :edit, :update, :destroy, :toggle_stock, :delete_image ]
+  before_action :require_permission, only: [ :index, :edit, :update, :toggle_stock, :new, :create, :destroy ]
 
   # Listar productos
   def index
@@ -15,7 +15,7 @@ class Admin::ProductsController < ApplicationController
     @product = Product.find_by(id: params[:id])
     unless @product
       redirect_to products_path, alert: "El producto no existe."
-    end 
+    end
   end
 
   # Formulario de creación
@@ -36,7 +36,7 @@ class Admin::ProductsController < ApplicationController
         end
       end
 
-      redirect_to admin_products_path, notice: 'Producto creado exitosamente.'
+      redirect_to admin_products_path, notice: "Producto creado exitosamente."
     else
       flash.now[:error] = @product.errors.full_messages.to_sentence
       puts @product.errors.full_messages
@@ -52,7 +52,7 @@ class Admin::ProductsController < ApplicationController
   # Actualizar producto
   def update
     @product = Product.find(params[:id])
-  
+
     if @product.update(product_params.except(:images))
       # Adjuntar nuevas imágenes si fueron enviadas
       if params[:product][:images].present?
@@ -66,7 +66,7 @@ class Admin::ProductsController < ApplicationController
         flash[:error] = "El producto debe tener al menos una imagen."
         render :edit and return
       end
-  
+
       # Si hay errores de validación, volver a la vista de edición
       if @product.errors.any?
         flash[:error] = @product.errors.full_messages.to_sentence
@@ -80,7 +80,7 @@ class Admin::ProductsController < ApplicationController
       render :edit
     end
   end
-  
+
 
   # Eliminar producto (lógico)
   def destroy
@@ -96,10 +96,10 @@ class Admin::ProductsController < ApplicationController
     if image.purge # Intenta eliminar la imagen del almacenamiento
       render json: { success: true }, status: :ok
     else
-      render json: { success: false, error: 'No se pudo eliminar la imagen' }, status: :unprocessable_entity
+      render json: { success: false, error: "No se pudo eliminar la imagen" }, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordNotFound
-    render json: { success: false, error: 'Imagen o producto no encontrado' }, status: :not_found
+    render json: { success: false, error: "Imagen o producto no encontrado" }, status: :not_found
   end
 
   # Cambiar stock del producto
@@ -142,10 +142,10 @@ class Admin::ProductsController < ApplicationController
       redirect_to admin_users_path
     end
   end
-  
+
   def require_permission
-    unless current_user.role.has_permission?('manage_products')
-      redirect_to root_path, alert: 'No tienes permiso para realizar esta acción.'
+    unless current_user.role.has_permission?("manage_products")
+      redirect_to root_path, alert: "No tienes permiso para realizar esta acción."
     end
   end
 end

@@ -1,6 +1,6 @@
 class Sale < ApplicationRecord
-  belongs_to :employee, class_name: 'User'
-  belongs_to :customer, class_name: 'User'
+  belongs_to :employee, class_name: "User"
+  belongs_to :customer, class_name: "User"
   has_many :sale_items, inverse_of: :sale, dependent: :destroy
   has_many :products, through: :sale_items
 
@@ -34,6 +34,6 @@ class Sale < ApplicationRecord
   end
 
   def must_have_sale_items
-    errors.add(:base, 'La venta debe tener al menos un producto.') if sale_items.empty?
+    errors.add(:base, "La venta debe tener al menos un producto.") if sale_items.empty?
   end
 end
