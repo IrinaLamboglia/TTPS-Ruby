@@ -1,6 +1,8 @@
 class AddDeviseToUsers < ActiveRecord::Migration[7.0]
   def change
     change_table :users, bulk: true do |t|
+      t.string :reset_password_token
+
       ## Confirmable (solo si planeas usarlo)
       # t.string   :confirmation_token
       # t.datetime :confirmed_at

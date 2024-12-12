@@ -15,7 +15,7 @@ roles = {
 
 roles["admin"].permissions = permissions.values
 roles["gerente"].permissions = permissions.values
-roles["empleado"].permissions = [permissions["manage_products"], permissions["manage_sales"]]
+roles["empleado"].permissions = [ permissions["manage_products"], permissions["manage_sales"] ]
 roles["comun"].permissions = []
 
 roles.each { |name, role| role.save! }
@@ -34,7 +34,7 @@ productos = [
     price: 30.0,
     stock: 20,
     category: categories["Ropa"],
-    images: ["pantalon1.jpg", "pantalon2.jpg"]
+    images: [ "pantalon1.jpg", "pantalon2.jpg" ]
   },
   {
     name: "Remera Lisa",
@@ -42,7 +42,7 @@ productos = [
     price: 15.0,
     stock: 50,
     category: categories["Ropa"],
-    images: ["remera1.jpg", "remera2.jpg", "remera3.jpg"]
+    images: [ "remera1.jpg", "remera2.jpg", "remera3.jpg" ]
   },
   {
     name: "Zapatillas Vans",
@@ -50,7 +50,7 @@ productos = [
     price: 60.0,
     stock: 10,
     category: categories["Calzado"],
-    images: ["zapatillas1.jpg", "zapatillas2.jpg"]
+    images: [ "zapatillas1.jpg", "zapatillas2.jpg" ]
   }
 ]
 
@@ -96,6 +96,7 @@ User.create!(
     username: "gerente_user_#{i + 1}",
     email: "gerente#{i + 1}@example.com",
     phone: "123456789#{i + 1}",
+    active: true,
     role: roles["gerente"],
     join_date: Date.today,
     password: "password",
@@ -106,6 +107,7 @@ User.create!(
     username: "empleado_user_#{i + 1}",
     email: "empleado#{i + 1}@example.com",
     phone: "123456780#{i + 1}",
+    active: true,
     role: roles["empleado"],
     join_date: Date.today,
     password: "password",
@@ -116,6 +118,7 @@ User.create!(
     username: "comun_user_#{i + 1}",
     email: "comun#{i + 1}@example.com",
     phone: "123456770#{i + 1}",
+    active: true,
     role: roles["comun"],
     join_date: Date.today,
     password: "password",

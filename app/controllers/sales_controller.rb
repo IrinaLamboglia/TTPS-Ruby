@@ -17,7 +17,6 @@ class SalesController < ApplicationController
     @products = Product.where.not(stock: 0)
   end
 
-  # GET /sales/1/edit
   def edit
   end
 

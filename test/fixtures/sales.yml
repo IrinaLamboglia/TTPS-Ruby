@@ -1,13 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+
+# test/fixtures/sales.yml
 one:
-  date: 2024-11-23 05:54:06
-  total: 9.99
-  employee: one
-  customer: one
+  customer: customer
+  employee: employee
+  total: 100.0
+  date: <%= Date.today %>
 
 two:
-  date: 2024-11-23 05:54:06
-  total: 9.99
-  employee: two
-  customer: two
+  customer: customer
+  employee: employee
+  total: 50.0
+  date: <%= Date.today %>

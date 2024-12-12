@@ -1,7 +1,16 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
+role_1:
+  name: role_1
 
-two:
-  name: MyString
+role_2:
+  name: role_2
+
+admin:
+  name: admin
+
+customer: 
+  name: customer
+
+employee: 
+  name: employee

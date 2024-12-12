@@ -1,7 +1,10 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
+manege_users:
+  name: manage_users
 
-two:
-  name: MyString
+manage_products:
+  name: manage_products
+
+manage_sales:
+  name: manage_sales

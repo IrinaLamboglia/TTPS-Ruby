@@ -12,4 +12,15 @@ module ActiveSupport
 
     # Add more helper methods to be used by all tests here...
   end
+
+  class ActiveSupport::TestCase
+    include Devise::Test::IntegrationHelpers
+
+    setup do
+      @user = users(:admin) 
+      sign_in @user
+    end
+  end
+  
+  
 end

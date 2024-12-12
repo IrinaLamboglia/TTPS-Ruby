@@ -2,12 +2,12 @@
 
 one:
   sale: one
-  product: one
+  product: product_1
   quantity: 1
   price: 9.99
 
 two:
   sale: two
-  product: two
+  product: product_2
   quantity: 1
   price: 9.99

@@ -36,7 +36,7 @@
             <% if product.images.attached? %>
               <%= image_tag product.images.first.variant(resize_to_fill: [300, 200]), class: "card-img-top", alt: product.name %>
             <% else %>
-              <%= image_tag "placeholder.png", class: "card-img-top", alt: "Imagen no disponible" %>
+              <%= image_tag "ejemplo.jpg", class: "card-img-top", alt: "Imagen no disponible" %>
             <% end %>
             <div class="card-body text-center">
               <h5 class="card-title"><%= product.name %></h5>

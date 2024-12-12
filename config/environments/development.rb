@@ -72,5 +72,4 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
   Rails.application.routes.default_url_options[:host] = "localhost:3000"
   config.active_storage.resolve_model_to_route = :rails_storage_proxy
-
 end

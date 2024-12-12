@@ -7,12 +7,12 @@ Rails.application.routes.draw do
   get "sale/set_sale"
 
   devise_for :users, controllers: {
-  sessions: 'users/sessions'
-}, skip: [:registrations]
+  sessions: "users/sessions"
+}, skip: [ :registrations ]
   # Ruta raíz
   root "storefront#index" # Página principal para el storefront público
 
-  # Administración (requiere autenticación y roles)
+    # Administración (requiere autenticación y roles)
     namespace :admin do
       resources :products
       resources :sales
@@ -21,25 +21,24 @@ Rails.application.routes.draw do
 
 
   # Storefront (vista pública)
-  resources :storefront, only: [:index]
+  resources :storefront, only: [ :index ]
 
-  # Rutas principales para productos y ventas
   resources :products
   resources :sales do
     member do
       post :cancel
     end
   end
-  
+
   # Administración (requiere autenticación y roles)
   namespace :admin do
     resources :products do
       member do
-        delete 'delete_image/:image_id', to: 'products#delete_image', as: 'delete_product_image'
+        delete "delete_image/:image_id", to: "products#delete_image", as: "delete_product_image"
       end
     end
     resources :sales
-    resources :users, except: [:destroy] do
+    resources :users, except: [ :destroy ] do
       member do
         post :toggle_active
         patch :update
@@ -55,18 +54,18 @@ Rails.application.routes.draw do
   end
 
   # Rutas para roles y categorías (opcional)
-  resources :roles, only: [:index, :show]
-  resources :categories, only: [:index, :show]
+  resources :roles, only: [ :index, :show ]
+  resources :categories, only: [ :index, :show ]
 
   # Subrecursos para imágenes (vinculadas a productos)
   resources :products do
-    resources :images, only: [:create, :destroy]
+    resources :images, only: [ :create, :destroy ]
   end
 
   # Endpoint de monitoreo de salud
   get "up", to: "rails/health#show", as: :rails_health_check
 
   devise_scope :user do
-    get '/login_as_admin', to: 'sessions#login_as_admin' if Rails.env.development?
+    get "/login_as_admin", to: "sessions#login_as_admin" if Rails.env.development?
   end
 end

@@ -72,4 +72,4 @@ gem "image_processing", "~> 1.2"
 gem "kaminari"
 gem "rails_sortable"
 gem "cocoon"
-gem 'minitest'
+gem "minitest"

@@ -1,6 +1,6 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
+product_1:
   name: MyString
   description: MyText
   price: 9.99
@@ -8,18 +8,39 @@ one:
   category: one
   color: MyString
   size: MyString
-  image: MyString
   created_at: 2024-11-23 03:10:00
   updated_at: 2024-11-23 03:10:00
 
-two:
+product_2:
   name: MyString
   description: MyText
   price: 9.99
   stock: 1
   category: two
   color: MyString
-  size: MyString
-  image: MyString
+  size:  MyString
   created_at: 2024-11-23 03:10:00
   updated_at: 2024-11-23 03:10:00
+
+one:
+  name: Product One
+  description: A sample product
+  price: 10.0
+  stock: 100
+  category: one
+  color: MyString
+  size: MyString
+  created_at: 2024-11-23 03:10:00
+  updated_at: 2024-11-23 03:10:00
+
+product_with_stock:
+  name: Product with Stock
+  stock: 10
+  price: 50.0
+  description: A product with stock
+  category: two
+  color: MyString
+  size: MyString
+  created_at: 2024-11-23 03:10:00
+  updated_at: 2024-11-23 03:10:00
+

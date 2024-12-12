@@ -1,9 +1,22 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  role: one
-  permission: one
+  role: role_1
+  permission: permission_1
 
 two:
-  role: two
-  permission: two
+  role: role_2
+  permission: permission_2
+
+admin_manage_users:
+  role: admin
+  permission: manage_users
+
+admin_manage_products:
+  role: admin
+  permission: manage_products
+
+admin_manage_sales:
+  role: admin
+  permission: manage_sales
+

@@ -1,19 +1,43 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  username: MyString
-  email: MyString
+  username: usuario1
+  email: MyString1
   phone: MyString
-  password_digest: MyString
-  role: MyString
+  role: role_1
   join_date: 2024-11-23
   active: false
 
 two:
-  username: MyString
-  email: MyString
+  username: usuario2
+  email: MyString2
   phone: MyString
-  password_digest: MyString
-  role: MyString
+  role: role_2
   join_date: 2024-11-23
   active: false
+
+admin:
+  username: admin
+  email: admin@example.com
+  role: admin
+  phone: 1234567890
+  join_date: 2024-11-23
+  active: true
+
+employee:
+  username: employee
+  email: employee@example.com
+  role: employee
+  phone: 1234567890
+  join_date: 2024-11-23
+  active: true
+
+customer:
+  username: customer
+  email: customer@example.com
+  role: customer
+  phone: 1234567890
+  join_date: 2024-11-23
+  active: true
+
+
