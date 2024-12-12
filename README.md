@@ -41,8 +41,9 @@ Avivas Inventory es una aplicación de gestión de inventarios que permite a los
 ### 1. Clonar el Repositorio
 
 ```sh
-git clone https://github.com/tu-usuario/avivas-inventory.git
-cd avivas-inventory
+git clone https://github.com/tu-usuario/avivas-inventory.git](https://github.com/IrinaLamboglia/TTPS-Ruby.git
+cd TTPS-Ruby
+code .
 ```
 
 ### 2. Instalar Dependencias
