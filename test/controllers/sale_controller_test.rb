@@ -1,8 +1,6 @@
 require "test_helper"
 
 class SalesControllerTest < ActionDispatch::IntegrationTest
-
-
   setup do
     @sale = sales(:one)
     @employee = users(:employee)
@@ -21,8 +19,8 @@ class SalesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create sale" do
-    assert_difference('Sale.count', 1) do
-      assert_difference('@product.reload.stock', -1) do
+    assert_difference("Sale.count", 1) do
+      assert_difference("@product.reload.stock", -1) do
         post sales_url, params: {
           sale: {
             employee_id: @employee.id,
@@ -41,13 +39,11 @@ class SalesControllerTest < ActionDispatch::IntegrationTest
       end
     end
   end
-  
-  
+
+
 
   test "should show sale" do
     get sale_url(@sale)
     assert_response :success
   end
-
-
 end

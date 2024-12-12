@@ -17,10 +17,8 @@ module ActiveSupport
     include Devise::Test::IntegrationHelpers
 
     setup do
-      @user = users(:admin) 
+      @user = users(:admin)
       sign_in @user
     end
   end
-  
-  
 end
