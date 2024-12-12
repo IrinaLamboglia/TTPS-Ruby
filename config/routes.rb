@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   get "sale/set_sale"
 
   devise_for :users, controllers: {
-  sessions: 'sessions'
+  sessions: 'users/sessions'
 }, skip: [:registrations]
   # Ruta raíz
   root "storefront#index" # Página principal para el storefront público

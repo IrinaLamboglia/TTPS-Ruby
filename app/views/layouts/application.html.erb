@@ -11,6 +11,7 @@
   <%= javascript_include_tag 'sales_form' %>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  
 </head>
 <body>
   <%= render 'layouts/navbar' %>
@@ -27,9 +28,85 @@
     <%= yield %>
   </div>
 
+  <!-- Modal de Confirmación -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="confirmModalBody">
+          ¿Estás seguro de que deseas realizar esta acción?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="confirmAction">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer class="bg-dark text-white text-center py-3">
     <p>&copy; 2024 Mi Tienda. Todos los derechos reservados.</p>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+      const confirmActionButton = document.getElementById('confirmAction');
+      const confirmModalBody = document.getElementById('confirmModalBody');
+      let formToSubmit;
+      let linkToFollow;
+
+      document.querySelectorAll('.confirm-action').forEach(button => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          const message = button.getAttribute('data-message') || "¿Estás seguro de que deseas realizar esta acción?";
+          confirmModalBody.textContent = message;
+
+          if (button.tagName === 'A') {
+            linkToFollow = button;
+          } else {
+            formToSubmit = button.closest('form');
+          }
+
+          confirmModal.show();
+        });
+      });
+
+      confirmActionButton.addEventListener('click', () => {
+        if (formToSubmit) {
+          formToSubmit.submit();
+        } else if (linkToFollow) {
+          const method = linkToFollow.getAttribute('data-method');
+          if (method === 'delete') {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = linkToFollow.href;
+            form.style.display = 'none';
+
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'delete';
+            form.appendChild(methodInput);
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'authenticity_token';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+
+            document.body.appendChild(form);
+            form.submit();
+          } else {
+            window.location.href = linkToFollow.href;
+          }
+        }
+      });
+    });
+  </script>
 </body>
 </html>

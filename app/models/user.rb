@@ -44,6 +44,14 @@ class User < ApplicationRecord
     role.name == 'empleado'
   end
 
+  def active_for_authentication?
+    super && active?
+  end
+
+  # Custom inactive message
+  def inactive_message
+    active? ? super : :blocked
+  end
 
 
   private 

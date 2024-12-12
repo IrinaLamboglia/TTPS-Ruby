@@ -49,8 +49,7 @@
             <td>
               <%= link_to 'Ver', admin_product_path(product), class: 'btn btn-outline-info btn-sm' %>
               <%= link_to 'Editar', edit_admin_product_path(product), class: 'btn btn-outline-warning btn-sm' %>
-              <%= button_to 'Eliminar', admin_product_path(product), method: :delete, class: 'btn btn-outline-danger btn-sm', data: { confirm: '¿Estás seguro de eliminar este producto?' } %>
-            </td>
+              <%= button_to 'Eliminar', admin_product_path(product), method: :delete, class: 'btn btn-outline-danger btn-sm confirm-action', data: { message: "¿Estás seguro de eliminar este producto?" } %>            </td>
           </tr>
         <% end %>
       </tbody>

@@ -59,9 +59,16 @@
                 </button>
               <% end %>
 
-              <% if current_user.admin?  %>
-                <%= button_to (usuario.active ? 'Bloquear' : 'Activar'), toggle_active_admin_user_path(usuario), method: :post, class: "btn #{usuario.active ? 'btn-outline-danger' : 'btn-success'} btn-sm" %>
+              <% if current_user.admin? %>
+                <% if current_user == usuario %>
+                  <button class="btn btn-outline-secondary btn-sm" disabled>
+                    <%= usuario.active ? 'Bloquear' : 'Activar' %>
+                  </button>
+                <% else %>
+                  <%= button_to (usuario.active ? 'Bloquear' : 'Activar'), toggle_active_admin_user_path(usuario), method: :post, class: "btn #{usuario.active ? 'btn-outline-danger' : 'btn-success'} btn-sm confirm-action", data: { message: "¿Estás seguro de que deseas #{usuario.active ? 'bloquear' : 'activar'} este usuario?" } %>
+                <% end %>
               <% end %>
+
             </td>
           </tr>
         <% end %>
@@ -79,6 +86,4 @@
     <% end %>
   </div>
 
-  <!-- Modal de confirmación -->
-  <%= render partial: 'shared/confirmation_modal' %>
 </section>
