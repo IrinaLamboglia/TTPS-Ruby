@@ -1,7 +1,9 @@
+# Controlador para gestionar productos en el panel de administración.
+# Proporciona acciones para listar, crear, editar, actualizar, eliminar y cambiar el stock de los productos.
 class Admin::ProductsController < ApplicationController
   before_action :authenticate_user! # Devise
-  before_action :set_product, only: [ :edit, :update, :destroy, :toggle_stock, :delete_image ]
-  before_action :require_permission, only: [ :index, :edit, :update, :toggle_stock, :new, :create, :destroy ]
+  before_action :set_product, only: [:edit, :update, :destroy, :toggle_stock, :delete_image]
+  before_action :require_permission, only: [:index, :edit, :update, :toggle_stock, :new, :create, :destroy]
 
   # Listar productos
   def index
@@ -11,6 +13,7 @@ class Admin::ProductsController < ApplicationController
     @categories = Category.all
   end
 
+  # Mostrar producto
   def show
     @product = Product.find_by(id: params[:id])
     unless @product
@@ -81,7 +84,6 @@ class Admin::ProductsController < ApplicationController
     end
   end
 
-
   # Eliminar producto (lógico)
   def destroy
     @product.update(deleted_at: Time.current, stock: 0)
@@ -89,6 +91,7 @@ class Admin::ProductsController < ApplicationController
     redirect_to admin_products_path
   end
 
+  # Eliminar imagen del producto
   def delete_image
     product = Product.find(params[:id]) # Encuentra el producto por ID
     image = product.images.find(params[:image_id]) # Encuentra la imagen por ID dentro del producto
@@ -113,6 +116,7 @@ class Admin::ProductsController < ApplicationController
     redirect_to admin_products_path
   end
 
+  # Obtener precio del producto
   def price
     product = Product.find(params[:id])
     render json: { price: product.price }
@@ -120,22 +124,27 @@ class Admin::ProductsController < ApplicationController
 
   private
 
+  # Establecer producto
   def set_product
     @product = Product.find(params[:id])
   end
 
+  # Parámetros permitidos para el producto
   def product_params
     params.require(:product).permit(:name, :description, :price, :stock, :color, :size, :category_id, images: [])
   end
 
+  # Columna de ordenación
   def sort_column
     params[:sort] || "name"
   end
 
+  # Dirección de ordenación
   def sort_direction
     params[:order] || "asc"
   end
 
+  # Restringir modificación de administrador
   def restrict_admin_modification
     if current_user.role.name == "gerente" && @user.role.name == "admin"
       flash[:alert] = "No tienes permiso para modificar un usuario con rol de Administrador."
@@ -143,6 +152,7 @@ class Admin::ProductsController < ApplicationController
     end
   end
 
+  # Requerir permiso para ciertas acciones
   def require_permission
     unless current_user.role.has_permission?("manage_products")
       redirect_to root_path, alert: "No tienes permiso para realizar esta acción."

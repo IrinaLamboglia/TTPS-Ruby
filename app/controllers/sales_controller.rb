@@ -1,15 +1,20 @@
+# Controlador para gestionar ventas en la aplicación.
+# Proporciona acciones para listar, crear, editar, actualizar, eliminar y cancelar ventas.
 class SalesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_sale, only: [ :show, :edit, :update, :destroy, :cancel ]
+  before_action :set_sale, only: [:show, :edit, :update, :destroy, :cancel]
   before_action :require_permission
 
+  # Listar ventas
   def index
     @sales = Sale.page(params[:page]).per(10)
   end
 
+  # Mostrar venta
   def show
   end
 
+  # Formulario de creación
   def new
     @sale = Sale.new
     @sale.sale_items.build
@@ -17,9 +22,11 @@ class SalesController < ApplicationController
     @products = Product.where.not(stock: 0)
   end
 
+  # Formulario de edición
   def edit
   end
 
+  # Crear una nueva venta
   def create
     # Filtra los elementos vacíos
     filtered_params = sale_params
@@ -47,14 +54,17 @@ class SalesController < ApplicationController
     render :new, status: :unprocessable_entity
   end
 
+  # Actualizar venta
   def update
   end
 
+  # Eliminar venta
   def destroy
     @sale.destroy!
     redirect_to sales_path, notice: "Venta eliminada exitosamente.", status: :see_other
   end
 
+  # Cancelar venta
   def cancel
     @sale = Sale.find(params[:id])
 
@@ -70,19 +80,22 @@ class SalesController < ApplicationController
 
   private
 
+  # Establecer venta
   def set_sale
     @sale = Sale.find(params[:id])
   end
 
+  # Parámetros permitidos para la venta
   def sale_params
     params.require(:sale).permit(
       :customer_id,
       :employee_id,
       :date,
-      sale_items_attributes: [ :product_id, :quantity, :price ]
+      sale_items_attributes: [:product_id, :quantity, :price]
     )
   end
 
+  # Actualizar stock del producto
   def update_product_stock(sale)
     sale.sale_items.each do |item|
       product = item.product
@@ -93,6 +106,7 @@ class SalesController < ApplicationController
     end
   end
 
+  # Restaurar stock del producto
   def restore_product_stock(sale)
     sale.sale_items.each do |item|
       product = item.product
@@ -100,6 +114,7 @@ class SalesController < ApplicationController
     end
   end
 
+  # Requerir permiso para ciertas acciones
   def require_permission
     unless current_user.role.has_permission?("manage_sales")
       redirect_to root_path, alert: "No tienes permiso para realizar esta acción."

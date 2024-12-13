@@ -50,6 +50,8 @@ code .
 
 - bundle install
 - yarn install
+- bundle update
+
 
 ### 3.Configurar la Bases de Datos
 - rails db:create

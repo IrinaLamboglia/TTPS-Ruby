@@ -5,7 +5,7 @@ class ProductsController < ApplicationController
   def index
     @categories = Category.all  # Trae todas las categorías
 
-    @products = Product.page(params[:page]).per(9)
+    @products = Product.page(params[:page]).per(9).where("stock > 0")  # Trae todos los productos con stock disponible
 
 
     # Filtro por nombre de producto
@@ -25,12 +25,6 @@ class ProductsController < ApplicationController
     end
   end
 
-  def show
-    @product = Product.find_by(id: params[:id])
-    unless @product
-      redirect_to products_path, alert: "El producto no existe."
-    end
-  end
 
   # Mostrar detalles de un producto específico
   def show
