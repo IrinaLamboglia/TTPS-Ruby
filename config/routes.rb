@@ -1,10 +1,4 @@
 Rails.application.routes.draw do
-  get "sale/index"
-  get "sale/show"
-  get "sale/new"
-  get "sale/create"
-  get "sale/cancel"
-  get "sale/set_sale"
 
   devise_for :users, controllers: {
   sessions: "users/sessions"
@@ -15,7 +9,6 @@ Rails.application.routes.draw do
     # Administración (requiere autenticación y roles)
     namespace :admin do
       resources :products
-      resources :sales
       resources :users
     end
 
@@ -37,7 +30,6 @@ Rails.application.routes.draw do
         delete "delete_image/:image_id", to: "products#delete_image", as: "delete_product_image"
       end
     end
-    resources :sales
     resources :users, except: [ :destroy ] do
       member do
         post :toggle_active
