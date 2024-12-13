@@ -57,11 +57,14 @@ code .
 - rails db:create
 - rails db:migrate
 - rails db:seed
+- 
+### 4. Precompilar los archivos
+- rails assets:precompile
 
-### 4. Iniciar servidor
+### 5. Iniciar servidor
 - rails server
 
-### 5. Acceder a la Aplicación
+### 6. Acceder a la Aplicación
 - Accede al link http://localhost:3000 y navega por la aplicacion Avivas Inventory
 
 Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
