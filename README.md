@@ -32,7 +32,7 @@ Avivas Inventory es una aplicación de gestión de inventarios que permite a los
 
 - Ruby 3.0.0
 - Rails 6.1.4
-- PostgreSQL 12+
+- SQLite 3
 - Node.js 14+
 - Yarn 1.22+
 
