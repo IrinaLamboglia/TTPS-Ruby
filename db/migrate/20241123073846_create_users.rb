@@ -5,7 +5,7 @@ class CreateUsers < ActiveRecord::Migration[8.0]
         t.string :username
         t.string :email
         t.string :phone
-        t.string :password_digest
+        t.string "encrypted_password", default: "", null: false
         t.string :role
         t.date :join_date
         t.boolean :active
