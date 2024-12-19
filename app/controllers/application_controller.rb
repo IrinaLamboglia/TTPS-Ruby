@@ -1,26 +1,26 @@
-# Controlador base para la aplicación.
-# Proporciona métodos auxiliares y filtros de autenticación y autorización.
+# Base controller for the application.
+# Provides helper methods and authentication/authorization filters.
 class ApplicationController < ActionController::Base
   helper_method :current_user, :logged_in?
 
-  # Obtener el usuario actual
+  # Retrieve the current user
   def current_user
     super.tap do |user|
       puts "Current user: #{user.inspect}"
     end
   end
 
-  # Verificar si el usuario está logueado
+  # Check if the user is logged in
   def logged_in?
     current_user.present?
   end
 
-  # Requerir que el usuario sea administrador
+  # Require the user to be an admin
   def require_admin
     redirect_to root_path, alert: "Acceso denegado." unless current_user&.role&.name == "admin"
   end
 
-  # Requerir que el usuario sea gerente o administrador
+  # Require the user to be a manager or admin
   def require_manager_or_admin
     redirect_to root_path, alert: "Acceso denegado." unless %w[admin gerente].include?(current_user&.role&.name)
   end

@@ -1,11 +1,11 @@
-# Crear permisos
+# Create permissions
 permissions = {
   "manage_users" => Permission.find_or_create_by!(name: "manage_users"),
   "manage_products" => Permission.find_or_create_by!(name: "manage_products"),
   "manage_sales" => Permission.find_or_create_by!(name: "manage_sales")
 }
 
-# Crear roles con permisos
+# Create roles with permissions
 roles = {
   "admin" => Role.find_or_create_by!(name: "admin"),
   "gerente" => Role.find_or_create_by!(name: "gerente"),
@@ -20,7 +20,7 @@ roles["comun"].permissions = []
 
 roles.each { |name, role| role.save! }
 
-# Crear categorías
+# Create categories
 categories = {
   "Ropa" => Category.find_or_create_by!(name: "Ropa"),
   "Calzado" => Category.find_or_create_by!(name: "Calzado")

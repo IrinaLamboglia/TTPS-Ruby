@@ -1,8 +1,8 @@
 class Product < ApplicationRecord
-  # Esta clase representa un producto en el sistema de inventario.
-  # Un producto pertenece a una categoría y puede tener muchas imágenes asociadas.
-  # Incluye validaciones para asegurar que los datos del producto sean correctos.
-  # También soporta eliminación suave (soft delete).
+  # This class represents a product in the inventory system.
+  # A product belongs to a category and can have many associated images.
+  # It includes validations to ensure that the product data is correct.
+  # It also supports soft deletion.
 
   belongs_to :category
   has_many_attached :images, dependent: :destroy # Relación uno a muchos
@@ -19,15 +19,15 @@ class Product < ApplicationRecord
 
   private
 
-  # Validación para la creación: el producto debe tener al menos una imagen.
+  # Validation for creation: the product must have at least one image.
   def must_have_images
     errors.add(:images, "debe tener al menos una imagen") unless images.attached?
   end
 
-  # Validación para la actualización: debe haber al menos una imagen si se eliminan todas las anteriores.
+  # Validation for update: there must be at least one image if all previous ones are removed.
   def must_have_images_on_update
-    # Verificar que si el producto no tiene imágenes adjuntas (y no está eliminando ninguna imagen),
-    # se agregue un error.
+    # Check that if the product does not have attached images (and is not deleting any images),
+    # an error is added.
     if images.attached? && images.count == 0 && params[:product][:images].blank?
       errors.add(:images, "debe tener al menos una imagen o una nueva imagen subida")
     end

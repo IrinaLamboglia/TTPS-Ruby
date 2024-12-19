@@ -1,5 +1,5 @@
 class SessionsController < Devise::SessionsController
-    # Puedes personalizar las acciones si lo necesitas
+    
 
     def login_as_admin
       request.env["devise.mapping"] = Devise.mappings[:user]

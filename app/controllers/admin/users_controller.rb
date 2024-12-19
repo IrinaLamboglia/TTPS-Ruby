@@ -1,11 +1,11 @@
-# Controlador para gestionar usuarios en el panel de administración.
-# Proporciona acciones para listar, crear, editar, actualizar y cambiar el estado activo de los usuarios.
+# Controller to manage users in the admin panel.
+# Provides actions to list, create, edit, update, and toggle the active status of users.
 class Admin::UsersController < ApplicationController
   before_action :authenticate_user! # Devise
   before_action :set_usuario, only: [:edit, :update, :toggle_active, :edit_profile]
   before_action :require_permission, only: [:index, :new, :create, :toggle_active, :edit, :update]
 
-  # Listar usuarios
+  # List users
   def index
     @usuarios = User.includes(:role)
                     .order(sort_column => sort_direction)
@@ -14,17 +14,16 @@ class Admin::UsersController < ApplicationController
     @roles = Role.all
   end
 
-  # Formulario de creación
+  # Creation form
   def new
     @roles = Role.all
     @user = User.new
   end
 
-  # Crear un nuevo usuario
+  # Create a new user
   def create
     @user = User.new(user_params)
     @user.join_date ||= Date.today
-    @user.active = true
     @roles = Role.all
 
     if @user.save
@@ -34,12 +33,12 @@ class Admin::UsersController < ApplicationController
     end
   end
 
-  # Editar usuario
+  # Edit user
   def edit
     @roles = Role.all
   end
 
-  # Actualizar usuario
+  # Update user
   def update
     clean_params = clean_password_params(user_params)
 
@@ -51,7 +50,7 @@ class Admin::UsersController < ApplicationController
     end
   end
 
-  # Cambiar estado activo
+  # Toggle active status
   def toggle_active
     @user.active = !@user.active
     if @user.save
@@ -63,17 +62,17 @@ class Admin::UsersController < ApplicationController
     redirect_to admin_users_path
   end
 
-  # Mostrar usuario
+  # Show user
   def show
     @user = User.find(params[:id])
   end
 
-  # Editar perfil del usuario actual
+  # Edit current user's profile
   def edit_profile
     @user = current_user
   end
 
-  # Actualizar perfil del usuario actual
+  # Update current user's profile
   def update_profile
     @user = current_user
     clean_params = clean_password_params(user_params.except(:role_id))
@@ -88,19 +87,19 @@ class Admin::UsersController < ApplicationController
 
   private
 
-  # Establecer usuario
+  # Set user
   def set_usuario
     @user = User.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to admin_users_path, notice: "Usuario no encontrado."
   end
 
-  # Parámetros permitidos para el usuario
+  # Permitted parameters for the user
   def user_params
     params.require(:user).permit(:username, :email, :phone, :role_id, :password, :password_confirmation)
   end
 
-  # Eliminar contraseñas vacías de los parámetros
+  # Remove empty passwords from parameters
   def clean_password_params(params)
     if params[:password].blank? && params[:password_confirmation].blank?
       params.except(:password, :password_confirmation)
@@ -109,17 +108,17 @@ class Admin::UsersController < ApplicationController
     end
   end
 
-  # Columna de ordenación
+  # Sorting column
   def sort_column
     params[:sort] || "email"
   end
 
-  # Dirección de ordenación
+  # Sorting direction
   def sort_direction
     params[:order] || "asc"
   end
 
-  # Requerir permiso para ciertas acciones
+  # Require permission for certain actions
   def require_permission
     unless current_user.role.has_permission?("manage_users")
       redirect_to root_path, alert: "No tienes permiso para realizar esta acción."

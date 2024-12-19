@@ -1,24 +1,24 @@
 class ProductsController < ApplicationController
   skip_before_action :authenticate_user!, only: [ :index, :show ]
 
-  # Mostrar el catálogo público
+  # Display the public catalog
   def index
-    @categories = Category.all  # Trae todas las categorías
+    Category.all  # Fetches all categories
 
-    @products = Product.page(params[:page]).per(9).where("stock > 0")  # Trae todos los productos con stock disponible
+    # Fetches all products with available stock
 
 
-    # Filtro por nombre de producto
+    # Filter by product name
     if params[:query].present?
       @products = @products.where("name LIKE ?", "%#{params[:query]}%")
     end
 
-    # Filtro por categoría
+    # Filter by category
     if params[:category].present?
       @products = @products.where(category_id: params[:category])
     end
 
-    # Ordenar productos
+    # Sort products
     if params[:order_by].present?
       order_column = params[:order_by] == "price" ? :price : :name
       @products = @products.order(order_column)

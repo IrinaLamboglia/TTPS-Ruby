@@ -1,25 +1,25 @@
-# Controlador para gestionar ventas en la aplicación.
+# Controller to manage sales in the application.
 class SalesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_sale, only: [:show, :edit, :update, :destroy, :cancel]
   before_action :require_permission
   before_action :load_customers_and_products, only: [:new, :create]
 
-  # Listar ventas
+  # List sales
   def index
     @sales = Sale.page(params[:page]).per(10)
   end
 
-  # Mostrar venta
+  # Show sale
   def show; end
 
-  # Formulario de creación
+  # New sale form
   def new
     @sale = Sale.new
     @sale.sale_items.build
   end
 
-  # Crear una nueva venta
+  # Create a new sale
   def create
     @sale = Sale.new(sale_params)
 
@@ -35,10 +35,10 @@ class SalesController < ApplicationController
     render_with_error(:new, "Error: #{e.message}")
   end
 
-  # Formulario de edición
+  # Edit sale form
   def edit; end
 
-  # Actualizar venta
+  # Update sale
   def update
     if @sale.update(sale_params)
       redirect_to @sale, notice: "Venta actualizada exitosamente."
@@ -47,13 +47,13 @@ class SalesController < ApplicationController
     end
   end
 
-  # Eliminar venta
+  # Delete sale
   def destroy
     @sale.destroy!
     redirect_to sales_path, notice: "Venta eliminada exitosamente.", status: :see_other
   end
 
-  # Cancelar venta
+  # Cancel sale
   def cancel
     ActiveRecord::Base.transaction do
       @sale.update!(deleted_at: Time.current)
@@ -67,18 +67,18 @@ class SalesController < ApplicationController
 
   private
 
-  # Cargar clientes y productos disponibles
+  # Load available customers and products
   def load_customers_and_products
     @customers = User.where(role_id: Role.find_by(name: "comun"))
     @products = Product.where.not(stock: 0)
   end
 
-  # Establecer venta
+  # Set sale
   def set_sale
     @sale = Sale.find(params[:id])
   end
 
-  # Parámetros permitidos para la venta
+  # Permitted parameters for sale
   def sale_params
     params.require(:sale).permit(
       :customer_id,
@@ -88,7 +88,7 @@ class SalesController < ApplicationController
     )
   end
 
-  # Actualizar stock del producto
+  # Update product stock
   def update_product_stock(sale)
     sale.sale_items.each do |item|
       product = item.product
@@ -98,7 +98,7 @@ class SalesController < ApplicationController
     end
   end
 
-  # Restaurar stock del producto
+  # Restore product stock
   def restore_product_stock(sale)
     sale.sale_items.each do |item|
       product = item.product
@@ -106,7 +106,7 @@ class SalesController < ApplicationController
     end
   end
 
-  # Renderizar con errores y datos preestablecidos
+  # Render with errors and preset data
   def render_with_error(view, message)
     flash.now[:alert] = message
     render view, status: :unprocessable_entity

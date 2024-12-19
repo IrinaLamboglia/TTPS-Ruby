@@ -22,7 +22,7 @@ class User < ApplicationRecord
   scope :filter_by_active, ->(activo) { where(active: activo == "si") if activo.present? }
   scope :filter_by_role, ->(rol) { joins(:role).where(roles: { name: rol }) if rol.present? }
 
-  # Métodos de desactivación
+  # Deactivation methods
   def activate!
     update(active: true)
   end

@@ -4,16 +4,16 @@ Rails.application.routes.draw do
   sessions: "users/sessions"
 }, skip: [ :registrations ]
   # Ruta raíz
-  root "storefront#index" # Página principal para el storefront público
+  root "storefront#index" # Main page for the public storefront
 
-    # Administración (requiere autenticación y roles)
+    # Administration (requires authentication and roles)
     namespace :admin do
       resources :products
       resources :users
     end
 
 
-  # Storefront (vista pública)
+  # Storefront (public view)
   resources :storefront, only: [ :index ]
 
   resources :products
@@ -23,7 +23,7 @@ Rails.application.routes.draw do
     end
   end
 
-  # Administración (requiere autenticación y roles)
+  # Administration (requires authentication and roles)
   namespace :admin do
     resources :products do
       member do
@@ -45,11 +45,11 @@ Rails.application.routes.draw do
     end
   end
 
-  # Rutas para roles y categorías (opcional)
+  # Routes for roles and categories (optional)
   resources :roles, only: [ :index, :show ]
   resources :categories, only: [ :index, :show ]
 
-  # Subrecursos para imágenes (vinculadas a productos)
+  # Subresources for images (linked to products)
   resources :products do
     resources :images, only: [ :create, :destroy ]
   end

@@ -8,15 +8,16 @@ Avivas Inventory es una aplicación de gestión de inventarios que permite a los
 
 ### 1. Autenticación y Autorización
 - **Devise**: Se utiliza Devise para la autenticación de usuarios. Los usuarios pueden registrarse, iniciar sesión, recuperar contraseñas y cerrar sesión.
-- **Roles de Usuario**: Se implementaron roles de usuario (admin, manager, employee) para controlar el acceso a diferentes partes de la aplicación. Los roles se gestionan a través de un modelo `Role` asociado al modelo `User`.
+- **Roles de Usuario**: Se implementaron roles de usuario (admin, gerente, empleado, común) para controlar el acceso a diferentes partes de la aplicación. Los roles se gestionan a través de un modelo `Role` asociado al modelo `User`.
+  - Los usuarios con rol **común** no tienen permisos en el sistema y no pueden iniciar sesión.
 - **Bloqueo de Usuarios**: Se añadió un campo `active` al modelo `User` para indicar si un usuario está activo o bloqueado. Los usuarios bloqueados no pueden iniciar sesión.
 
 ### 2. Gestión de Productos
-- **CRUD de Productos**: Los administradores, gerentes y empelados pueden crear, leer, actualizar y eliminar productos. 
+- **CRUD de Productos**: Los administradores, gerentes y empleados pueden crear, leer, actualizar y eliminar productos. 
 - **Imágenes de Productos**: Se permite subir imágenes para los productos utilizando Active Storage.
 
 ### 3. Gestión de Ventas
-- **CRUD de Ventas**: Los administradores, gerentes ,empleados pueden crear, leer, actualizar y cancelar ventas. Las ventas canceladas se marcan como "Canceladas" y no se pueden modificar.
+- **CRUD de Ventas**: Los administradores, gerentes y empleados pueden crear, leer, actualizar y cancelar ventas. Las ventas canceladas se marcan como "Canceladas" y no se pueden modificar.
 - **Paginación**: Se implementó la paginación para la lista de ventas utilizando la gema `kaminari`.
 
 ### 4. Gestión de Usuarios
@@ -41,8 +42,8 @@ Avivas Inventory es una aplicación de gestión de inventarios que permite a los
 ### 1. Clonar el Repositorio
 
 ```sh
-git clone https://github.com/tu-usuario/avivas-inventory.git](https://github.com/IrinaLamboglia/TTPS-Ruby.git
-cd TTPS-Ruby
+git clone https://github.com/tu-usuario/avivas-inventory.git
+cd avivas-inventory
 code .
 ```
 
@@ -66,5 +67,29 @@ code .
 
 ### 6. Acceder a la Aplicación
 - Accede al link http://localhost:3000 y navega por la aplicacion Avivas Inventory
+
+### 7. Usuarios de Prueba
+
+Después de correr el seed, puedes ingresar a la aplicación con los siguientes usuarios:
+
+```plaintext
+# Admin
+Email: admin@example.com
+Contraseña: password
+
+# Gerentes
+Email: gerente1@example.com
+Contraseña: password
+
+Email: gerente2@example.com
+Contraseña: password
+
+# Empleados
+Email: empleado1@example.com
+Contraseña: password
+
+Email: empleado2@example.com
+Contraseña: password
+```
 
 Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.

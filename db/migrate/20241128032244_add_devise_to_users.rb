@@ -17,8 +17,8 @@ class AddDeviseToUsers < ActiveRecord::Migration[7.0]
 
     # Agrega índices que falten
     # Si ya existen, usa una verificación para evitar conflictos
-    add_index :users, :email, unique: true unless index_exists?(:users, :email)
-    add_index :users, :reset_password_token, unique: true unless index_exists?(:users, :reset_password_token)
+    add_index :users, :email, unique: true 
+    add_index :users, :reset_password_token, unique: true 
     # add_index :users, :confirmation_token, unique: true # Para confirmable
     # add_index :users, :unlock_token, unique: true # Para lockable
   end
