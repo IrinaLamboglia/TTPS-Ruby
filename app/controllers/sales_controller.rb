@@ -1,9 +1,9 @@
 # Controlador para gestionar ventas en la aplicación.
-# Proporciona acciones para listar, crear, editar, actualizar, eliminar y cancelar ventas.
 class SalesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_sale, only: [:show, :edit, :update, :destroy, :cancel]
   before_action :require_permission
+  before_action :load_customers_and_products, only: [:new, :create]
 
   # Listar ventas
   def index
@@ -11,51 +11,40 @@ class SalesController < ApplicationController
   end
 
   # Mostrar venta
-  def show
-  end
+  def show; end
 
   # Formulario de creación
   def new
     @sale = Sale.new
     @sale.sale_items.build
-    @customers = User.where(role_id: Role.find_by(name: "comun"))
-    @products = Product.where.not(stock: 0)
-  end
-
-  # Formulario de edición
-  def edit
   end
 
   # Crear una nueva venta
   def create
-    # Filtra los elementos vacíos
-    filtered_params = sale_params
-
-    @sale = Sale.new(filtered_params)
+    @sale = Sale.new(sale_params)
 
     ActiveRecord::Base.transaction do
       if @sale.save
-        @sale.sale_items.each do |sale_item|
-          product = sale_item.product
-          product.update!(stock: product.stock - sale_item.quantity)
-        end
+        update_product_stock(@sale)
         redirect_to @sale, notice: "Venta creada exitosamente."
       else
-        @customers = User.where(role_id: Role.find_by(name: "comun"))
-        @products = Product.where("stock > 0") # Filtrar productos con al menos un stock disponible
-        flash.now[:alert] = "Hubo un error al crear la venta."
-        render :new, status: :unprocessable_entity
+        render_with_error(:new, "Hubo un error al crear la venta.")
       end
     end
   rescue ActiveRecord::RecordInvalid => e
-    @customers = User.where(role_id: Role.find_by(name: "comun"))
-    @products = Product.where("stock > 0") # Filtrar productos con al menos un stock disponible
-    flash.now[:alert] = "Error: #{e.message}"
-    render :new, status: :unprocessable_entity
+    render_with_error(:new, "Error: #{e.message}")
   end
+
+  # Formulario de edición
+  def edit; end
 
   # Actualizar venta
   def update
+    if @sale.update(sale_params)
+      redirect_to @sale, notice: "Venta actualizada exitosamente."
+    else
+      render_with_error(:edit, "Hubo un error al actualizar la venta.")
+    end
   end
 
   # Eliminar venta
@@ -66,11 +55,9 @@ class SalesController < ApplicationController
 
   # Cancelar venta
   def cancel
-    @sale = Sale.find(params[:id])
-
     ActiveRecord::Base.transaction do
-      @sale.update!(deleted_at: Time.current) # Marca la venta como cancelada
-      restore_product_stock(@sale)           # Restaura el stock
+      @sale.update!(deleted_at: Time.current)
+      restore_product_stock(@sale)
     end
 
     redirect_to sales_path, notice: "Venta cancelada exitosamente."
@@ -79,6 +66,12 @@ class SalesController < ApplicationController
   end
 
   private
+
+  # Cargar clientes y productos disponibles
+  def load_customers_and_products
+    @customers = User.where(role_id: Role.find_by(name: "comun"))
+    @products = Product.where.not(stock: 0)
+  end
 
   # Establecer venta
   def set_sale
@@ -99,10 +92,9 @@ class SalesController < ApplicationController
   def update_product_stock(sale)
     sale.sale_items.each do |item|
       product = item.product
-      if product.stock < item.quantity
-        raise ActiveRecord::RecordInvalid.new(sale)
-      end
-      product.update!(stock: product.stock - item.quantity)
+      raise ActiveRecord::RecordInvalid.new(sale) if product.stock < item.quantity
+
+      product.decrement!(:stock, item.quantity)
     end
   end
 
@@ -110,8 +102,14 @@ class SalesController < ApplicationController
   def restore_product_stock(sale)
     sale.sale_items.each do |item|
       product = item.product
-      product.update!(stock: product.stock + item.quantity)
+      product.increment!(:stock, item.quantity)
     end
+  end
+
+  # Renderizar con errores y datos preestablecidos
+  def render_with_error(view, message)
+    flash.now[:alert] = message
+    render view, status: :unprocessable_entity
   end
 
   # Requerir permiso para ciertas acciones
