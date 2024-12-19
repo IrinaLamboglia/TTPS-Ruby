@@ -17,20 +17,19 @@ class Admin::UsersController < ApplicationController
   # Formulario de creación
   def new
     @roles = Role.all
-    @user = User.all.new
+    @user = User.new
   end
 
   # Crear un nuevo usuario
   def create
     @user = User.new(user_params)
-    @user.join_date = Date.today unless @user.join_date.present?
+    @user.join_date ||= Date.today
+    @user.active = true
+    @roles = Role.all
 
     if @user.save
-      flash[:success] = "Usuario creado correctamente"
-      redirect_to admin_users_path
+      redirect_to admin_users_path, notice: "Usuario creado correctamente."
     else
-      flash.now[:error] = @user.errors.full_messages.to_sentence
-      puts @user.errors.full_messages
       render :new
     end
   end
@@ -42,17 +41,12 @@ class Admin::UsersController < ApplicationController
 
   # Actualizar usuario
   def update
-    clean_params = user_params.dup
-
-    # Eliminar contraseñas vacías de los parámetros
-    clean_params = clean_params.except(:password, :password_confirmation) if clean_params[:password].blank? && clean_params[:password_confirmation].blank?
+    clean_params = clean_password_params(user_params)
 
     if @user.update(clean_params)
-      flash[:success] = "Usuario actualizado correctamente"
-      redirect_to admin_users_path
+      redirect_to admin_users_path, notice: "Usuario actualizado correctamente."
     else
-      flash.now[:error] = @user.errors.full_messages.to_sentence
-      puts @user.errors.full_messages
+      flash.now[:error] = "Error al actualizar el usuario."
       render :edit
     end
   end
@@ -60,9 +54,12 @@ class Admin::UsersController < ApplicationController
   # Cambiar estado activo
   def toggle_active
     @user.active = !@user.active
-    @user.save
-    estado = @user.active ? "activado" : "bloqueado"
-    flash[:success] = "El usuario ha sido #{estado}"
+    if @user.save
+      estado = @user.active ? "activado" : "bloqueado"
+      flash.now[:success] = "El usuario ha sido #{estado}."
+    else
+      flash.now[:error] = "Error al cambiar el estado del usuario: #{@user.errors.full_messages.to_sentence}."
+    end
     redirect_to admin_users_path
   end
 
@@ -78,15 +75,13 @@ class Admin::UsersController < ApplicationController
 
   # Actualizar perfil del usuario actual
   def update_profile
-    @user = current_user # Ya establece el usuario actual
-    clean_params = user_params.except(:role_id)
-    clean_params = clean_params.except(:password, :password_confirmation) if clean_params[:password].blank? && clean_params[:password_confirmation].blank?
+    @user = current_user
+    clean_params = clean_password_params(user_params.except(:role_id))
 
     if @user.update(clean_params)
-      flash[:success] = "Perfil actualizado correctamente"
-      redirect_to root_path
+      redirect_to root_path, notice: "Perfil actualizado correctamente."
     else
-      flash.now[:error] = @user.errors.full_messages.to_sentence
+      flash.now[:error] = "Error al actualizar el perfil."
       render :edit_profile
     end
   end
@@ -96,11 +91,22 @@ class Admin::UsersController < ApplicationController
   # Establecer usuario
   def set_usuario
     @user = User.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to admin_users_path, notice: "Usuario no encontrado."
   end
 
   # Parámetros permitidos para el usuario
   def user_params
     params.require(:user).permit(:username, :email, :phone, :role_id, :password, :password_confirmation)
+  end
+
+  # Eliminar contraseñas vacías de los parámetros
+  def clean_password_params(params)
+    if params[:password].blank? && params[:password_confirmation].blank?
+      params.except(:password, :password_confirmation)
+    else
+      params
+    end
   end
 
   # Columna de ordenación

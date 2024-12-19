@@ -44,7 +44,6 @@ class Admin::ProductsController < ApplicationController
   end
 
   # Actualizar producto
-  # Actualizar producto
   def update
     if @product.update(product_params.except(:images))
       # Adjuntar nuevas imágenes, si se enviaron
