@@ -26,7 +26,7 @@ categories = {
   "Calzado" => Category.find_or_create_by!(name: "Calzado")
 }
 
-# Cargar productos
+# Load products
 productos = [
   {
     name: "Pantalón Casual",

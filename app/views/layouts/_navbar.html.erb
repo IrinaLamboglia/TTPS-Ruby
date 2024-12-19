@@ -43,9 +43,9 @@
           <li class="nav-item">
             <%= link_to "Cerrar Sesión", destroy_user_session_path, method: :delete, data: { confirm: "¿Estás seguro de que deseas cerrar sesión?" }, class: "nav-link confirm-action" %>          </li>
         <% else %>
-          <li class="nav-item">
-            <%= link_to "Iniciar sesión", new_user_session_path, class: "nav-link" %>
-          </li>
+            <li class="nav-item">
+              <%= link_to "Iniciar sesión", new_user_session_path, class: "nav-link" %>
+            </li>
         <% end %>
       </ul>
     </div>

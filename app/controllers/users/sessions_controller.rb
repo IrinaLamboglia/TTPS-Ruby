@@ -27,12 +27,16 @@ class Users::SessionsController < Devise::SessionsController
 
   def create
     user = User.find_by(email: params[:user][:email])
-
+  
     if user && !user.active?
       set_flash_message! :alert, :blocked
+      redirect_to new_user_session_path
+    elsif user && user.role.name == 'comun'
+      set_flash_message! :alert, :role_restricted
       redirect_to new_user_session_path
     else
       super
     end
   end
+  
 end

@@ -31,7 +31,7 @@ class User < ApplicationRecord
     update(active: false, password: SecureRandom.hex)
   end
 
-  # Métodos para verificar roles
+  # Methods to verify roles
   def admin?
     role.name == "admin"
   end
@@ -50,8 +50,15 @@ class User < ApplicationRecord
 
   # Custom inactive message
   def inactive_message
-    active? ? super : :blocked
+    if !active?
+      :blocked
+    elsif role.name == 'comun'
+      :role_restricted
+    else
+      super
+    end
   end
+  
 
 
   private

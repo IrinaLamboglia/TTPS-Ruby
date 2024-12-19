@@ -51,6 +51,7 @@ es:
       already_signed_out: "Has cerrado sesión exitosamente."
       user:
         blocked: "Tu cuenta ha sido bloqueada. Por favor, contacta con soporte."
+        role_restricted: "No tienes permisos para acceder al sistema."
     unlocks:
       send_instructions: "Recibirás un correo electrónico con instrucciones para desbloquear tu cuenta en unos minutos."
       send_paranoid_instructions: "Si tu cuenta existe, recibirás un correo electrónico con instrucciones para desbloquearla en unos minutos."
