@@ -3,7 +3,8 @@ class ProductsController < ApplicationController
 
   # Display the public catalog
   def index
-    Category.all  # Fetches all categories
+    @categories = Category.all  # Fetches all categories
+    @products = Product.all
 
     # Fetches all products with available stock
 
@@ -23,10 +24,12 @@ class ProductsController < ApplicationController
       order_column = params[:order_by] == "price" ? :price : :name
       @products = @products.order(order_column)
     end
+
+    @products = @products.page(params[:page]).per(params.fetch(:per_page, 25))  # Paginación
   end
 
 
-  # Mostrar detalles de un producto específico
+  # Display details of a specific product
   def show
     @product = Product.find(params[:id])
     if  @product.stock <= 0
